@@ -23,7 +23,7 @@ const Rating: FunctionComponent<RatingProps> = ({
                 ? "fa fa-star-half-alt"
                 : "far fa-star"
             }
-          />
+          ></i>
         </span>
       ))}
       <span>{text && text}</span>
