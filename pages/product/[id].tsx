@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import Rating from "../../components/Rating";
 import products from "../api/data/products";
@@ -13,8 +13,15 @@ interface ProductScreenProps {}
 const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
   const router = useRouter();
   const { id } = router.query;
-  const product = products.find((p) => p._id === id);
-  if (!product) return <div>404</div>;
+  const [product, setProduct] = useState({});
+  useEffect(() => {
+    const fetchProduct = async () => {
+      const response = await fetch(`/api/product/${id}`);
+      const data = await response.json();
+      setProduct(data);
+    };
+    fetchProduct();
+  }, [id]);
 
   return (
     <>
