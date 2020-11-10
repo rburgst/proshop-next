@@ -4,6 +4,7 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import Rating from "../../components/Rating";
 import products from "../api/data/products";
+import { IProduct } from "../api/data/products";
 
 interface ProductScreenRouteParams {
   id: string;
@@ -13,7 +14,7 @@ interface ProductScreenProps {}
 const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
   const router = useRouter();
   const { id } = router.query;
-  const [product, setProduct] = useState({});
+  const [product, setProduct] = useState<IProduct>({} as IProduct);
   useEffect(() => {
     const fetchProduct = async () => {
       const response = await fetch(`/api/product/${id}`);

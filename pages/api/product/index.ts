@@ -2,8 +2,11 @@
 
 import { NextApiRequest, NextApiResponse } from "next";
 import products from "../data/products";
+import connectDB from "../../../server/config/db";
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
+  const mongoose = connectDB();
+  console.error("get products");
   if (req.method === "GET") {
     res.statusCode = 200;
     res.json(products);
