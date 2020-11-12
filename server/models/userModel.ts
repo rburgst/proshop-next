@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model<IUser>("User", userSchema);
-
-export default User;
+// const User = mongoose.model<IUser>("User", userSchema);
+// see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
+export default mongoose.models.User ??
+  mongoose.model<IUser>("User", userSchema);

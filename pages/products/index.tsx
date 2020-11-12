@@ -5,10 +5,9 @@ import { GetServerSideProps } from "next";
 import { Col, Row } from "react-bootstrap";
 import Product from "../../components/Product";
 import { FunctionComponent, useEffect, useState } from "react";
-import fetch from "isomorphic-unfetch";
-import products from "../api/data/products";
 import { IProduct } from "../api/data/products";
 import connectDB from "../../server/config/db";
+import ProductModel from "../../server/models/productModel";
 
 interface ProductsProps {
   products: IProduct[];
@@ -30,12 +29,20 @@ const Home: FunctionComponent<ProductsProps> = ({ products }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const mongoose = connectDB();
+  const mongoose = await connectDB();
   console.log("get server props");
-  console.warn("get server props");
+  const products = await ProductModel.find({}).lean();
+  const leanProducts = products.map((product) => ({
+    ...product,
+    _id: product._id.toString(),
+    user: product.user.toString(),
+    createdAt: product.createdAt.toString(),
+    updatedAt: product.updatedAt.toString(),
+  }));
+
   return {
     props: {
-      products,
+      products: leanProducts,
     }, // will be passed to the page component as props
   };
 };

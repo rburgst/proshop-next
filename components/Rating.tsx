@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from "react";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faStar, faStarHalfAlt } from "@fortawesome/free-solid-svg-icons";
+import * as regIcons from "@fortawesome/free-regular-svg-icons";
 interface RatingProps {
   value: number;
   text: string;
@@ -12,21 +14,31 @@ const Rating: FunctionComponent<RatingProps> = ({
 }) => {
   return (
     <div className="rating">
-      {[...Array(5)].map((x, i) => (
-        <span key={`star-${i}`}>
-          <i
-            style={{ color }}
-            className={
-              value >= i + 1
-                ? "fa fa-star"
-                : value >= i + 0.5
-                ? "fa fa-star-half-alt"
-                : "far fa-star"
-            }
-          ></i>
-        </span>
-      ))}
-      <span>{text && text}</span>
+      {[...Array(5)].map((x, i) => {
+        const full = value >= i + 1;
+        const half = value >= i + 0.5;
+
+        return (
+          <span key={`star-${i}`}>
+            {full && (
+              <>
+                <FontAwesomeIcon color={color} icon={faStar} />
+              </>
+            )}
+            {!full && half && (
+              <>
+                <FontAwesomeIcon color={color} icon={faStarHalfAlt} />
+              </>
+            )}
+            {!full && !half && (
+              <>
+                <FontAwesomeIcon color={color} icon={regIcons.faStar} />
+              </>
+            )}
+          </span>
+        );
+      })}{" "}
+      ({value}) <span>{text && text}</span>
     </div>
   );
 };

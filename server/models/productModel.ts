@@ -62,6 +62,8 @@ const productSchema = new mongoose.Schema(
   }
 );
 
-const Product = mongoose.model("Product", productSchema);
+//const Product = mongoose.model("Product", productSchema);
 
-export default Product;
+// see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
+export default mongoose.models.Product ??
+  mongoose.model("Product", productSchema);

@@ -85,6 +85,6 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-const Order = mongoose.model("Order", orderSchema);
-
-export default Order;
+//const Order = mongoose.model("Order", orderSchema);
+// see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
+export default mongoose.models.Order ?? mongoose.model("Order", orderSchema);

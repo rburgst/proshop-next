@@ -10,11 +10,11 @@ interface ProductProps {
 const Product: FunctionComponent<ProductProps> = ({ product }) => {
   return (
     <Card className="my-3 p-3 rounded">
-      <Link href={`/product/${product._id}`}>
+      <Link href={`/products/${product._id}`}>
         <Card.Img src={product.image}></Card.Img>
       </Link>
       <Card.Body>
-        <Link href={`/product/${product._id}`}>
+        <Link href={`/products/${product._id}`}>
           <Card.Title as="div">
             <strong>{product.name}</strong>
           </Card.Title>
