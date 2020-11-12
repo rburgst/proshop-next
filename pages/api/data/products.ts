@@ -1,5 +1,5 @@
 export interface IProduct {
-  _id: string;
+  _id?: string;
   name: string;
   image: string;
   description: string;
@@ -12,7 +12,6 @@ export interface IProduct {
 }
 const products: IProduct[] = [
   {
-    _id: "1",
     name: "Airpods Wireless Bluetooth Headphones",
     image: "/images/airpods.jpg",
     description:
@@ -25,7 +24,6 @@ const products: IProduct[] = [
     numReviews: 12,
   },
   {
-    _id: "2",
     name: "iPhone 11 Pro 256GB Memory",
     image: "/images/phone.jpg",
     description:
@@ -38,7 +36,6 @@ const products: IProduct[] = [
     numReviews: 8,
   },
   {
-    _id: "3",
     name: "Cannon EOS 80D DSLR Camera",
     image: "/images/camera.jpg",
     description:
@@ -51,7 +48,6 @@ const products: IProduct[] = [
     numReviews: 12,
   },
   {
-    _id: "4",
     name: "Sony Playstation 4 Pro White Version",
     image: "/images/playstation.jpg",
     description:
@@ -64,7 +60,6 @@ const products: IProduct[] = [
     numReviews: 12,
   },
   {
-    _id: "5",
     name: "Logitech G-Series Gaming Mouse",
     image: "/images/mouse.jpg",
     description:
@@ -77,7 +72,6 @@ const products: IProduct[] = [
     numReviews: 10,
   },
   {
-    _id: "6",
     name: "Amazon Echo Dot 3rd Generation",
     image: "/images/alexa.jpg",
     description:

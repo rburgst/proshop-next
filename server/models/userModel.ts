@@ -1,5 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Document } from "mongoose";
 
+export interface ICreateUserInput {
+  name: IUser["name"];
+  email: IUser["email"];
+  password: IUser["password"];
+  isAdmin?: IUser["isAdmin"];
+}
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  isAdmin: boolean;
+}
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -26,6 +38,6 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 
 export default User;

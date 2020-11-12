@@ -1,6 +1,5 @@
 import mongoose, { Mongoose } from "mongoose";
-import * as colors from "colors";
-
+import "colorts/lib/string";
 /**
  * Global is used here to maintain a cached connection across hot reloads
  * in development. This prevents connections growing exponentiatlly
@@ -14,6 +13,7 @@ const connectDB = async () => {
       console.warn("reusing existing connection");
       return cachedMongoose;
     }
+    console.log("connecting to ", process.env.MONGO_URI);
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       useUnifiedTopology: true,
       useNewUrlParser: true,

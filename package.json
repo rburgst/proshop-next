@@ -5,11 +5,15 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "data:import": "ts-node -O '{\"module\":\"CommonJs\"}' server/seeder",
+    "data:destroy": "ts-node -O '{\"module\":\"CommonJs\"}' server/seeder -d"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",
-    "colors": "^1.4.0",
+    "bcryptjs": "^2.4.3",
+    "colorts": "^0.1.63",
+    "dotenv-flow": "^3.2.0",
     "isomorphic-unfetch": "^3.1.0",
     "mongoose": "^5.10.13",
     "next": "10.0.1",
@@ -18,11 +22,13 @@
     "react-dom": "17.0.1"
   },
   "devDependencies": {
-    "@types/colors": "^1.2.1",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/dotenv-flow": "^3.1.0",
     "@types/mongoose": "^5.7.37",
     "@types/node": "^14.14.6",
     "@types/react": "^16.9.55",
     "@types/react-bootstrap": "^0.32.24",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   }
 }
