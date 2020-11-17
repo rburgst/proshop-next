@@ -13,6 +13,13 @@
       "args": ["dev"],
       "env": { "NODE_OPTIONS": "--inspect" },
       "outFiles": ["${workspaceFolder}/**/*.js"]
+    },
+    {
+      "name": "Attach node",
+      "port": 9229,
+      "request": "attach",
+      "skipFiles": ["<node_internals>/**"],
+      "type": "pwa-node"
     }
   ]
 }
