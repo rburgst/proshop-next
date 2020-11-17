@@ -5,16 +5,16 @@ import { Col, Row } from "react-bootstrap";
 import Product from "../components/Product";
 import { useEffect, useState } from "react";
 import fetch from "isomorphic-unfetch";
+import { useAppDispatch } from "../frontend/store";
+import productListSlice from "../frontend/reducers/productReducers";
+import { listProducts } from "../frontend/reducers/productReducers";
 const Home = () => {
-  const [products, setProducts] = useState([]);
+  const dispatch = useAppDispatch();
+  const products = [];
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      const response = await fetch("/api/products");
-      const data = await response.json();
-      setProducts(data);
-    };
-    fetchProducts();
-  }, []);
+    dispatch(listProducts());
+  }, [dispatch]);
 
   return (
     <>

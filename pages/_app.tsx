@@ -6,16 +6,19 @@ import "@fortawesome/fontawesome-free/js/solid";
 import "@fortawesome/fontawesome-free/js/regular";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import React from "react";
+import { Provider } from "react-redux";
+import store from "../frontend/store";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <Provider store={store}>
       <Header />
       <main className="py-3">
         <Component {...pageProps} />
       </main>
       <Footer />
-    </>
+    </Provider>
   );
 }
 
