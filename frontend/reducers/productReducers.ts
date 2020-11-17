@@ -14,38 +14,35 @@ const initialState: ProductListState = {
   products: [],
 };
 
+// thunks
+
+export const fetchProducts = createAsyncThunk<IProduct[]>(
+  "productList/fetch",
+  async (thunkAPI) => {
+    const response = await fetch("/api/products");
+    const data = await response.json();
+    return data as IProduct[];
+  }
+);
+
 // slice
 
-const productListSlice = createSlice({
+export const productListSlice = createSlice({
   name: "productList",
   initialState: initialState,
-  reducers: {
-    productListRequest(state, action: PayloadAction<undefined>) {
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(fetchProducts.pending, (state) => {
       state.loading = true;
       state.products = [];
-    },
-    productListSuccess(state, action: PayloadAction<IProduct[]>) {
+    });
+    builder.addCase(fetchProducts.fulfilled, (state, { payload }) => {
       state.loading = false;
-      state.products = action.payload;
-    },
-    productListFail(state, action: PayloadAction<string>) {
+      state.products = payload;
+    });
+    builder.addCase(fetchProducts.rejected, (state, { payload }) => {
       state.loading = false;
-      state.error = action.payload;
-    },
+      state.error = payload;
+    });
   },
 });
-
-// actions
-export const listProducts = () => async (dispatch: AppDispatch) => {
-  try {
-    dispatch(productListSlice.actions.productListRequest());
-    const response = await fetch("/api/products");
-    const data: IProduct[] = await response.json();
-
-    dispatch(productListSlice.actions.productListSuccess(data));
-  } catch (error) {
-    const errorMsg = error.response?.data?.message ?? error.message;
-    dispatch(productListSlice.actions.productListFail(errorMsg));
-  }
-};
-export default productListSlice;
