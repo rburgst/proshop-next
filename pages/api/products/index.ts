@@ -3,8 +3,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import connectDB from "../../../server/config/db";
 import Product from "../../../server/models/productModel";
+import withMiddleware from "../../../server/middlewares/index";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   console.error("get products");
   if (req.method === "GET") {
     const mongoose = await connectDB();
@@ -18,3 +19,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     res.json({ error: "wrong http method" });
   }
 };
+
+export default withMiddleware(handler);
