@@ -21,6 +21,9 @@ export const fetchProducts = createAsyncThunk<IProduct[]>(
   async (thunkAPI) => {
     const response = await fetch("/api/products");
     const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText);
+    }
     return data as IProduct[];
   }
 );
@@ -40,9 +43,9 @@ export const productListSlice = createSlice({
       state.loading = false;
       state.products = payload;
     });
-    builder.addCase(fetchProducts.rejected, (state, { payload }) => {
+    builder.addCase(fetchProducts.rejected, (state, action) => {
       state.loading = false;
-      state.error = payload;
+      state.error = action.error.message;
     });
   },
 });

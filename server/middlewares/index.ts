@@ -39,7 +39,7 @@ const withMiddleware = (next: NextApiHandler) => async (
     // returns the next wrapped function(s) to be executed (can be an API route or another additional middleware)
     return await next(req, res);
   } catch (err) {
-    console.error("error running middlewares", err);
+    console.error("error caught in middleware", err);
     const error = res.statusCode === 200 ? 500 : res.statusCode;
     res.status(error);
     res.json({
@@ -47,7 +47,7 @@ const withMiddleware = (next: NextApiHandler) => async (
       stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
     });
     // if any middleware fails, throws a 400 error
-    return res.status(400).send(error);
+    return;
   }
 };
 export default withMiddleware;
