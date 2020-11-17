@@ -5,12 +5,13 @@ import { Col, Row } from "react-bootstrap";
 import Product from "../components/Product";
 import { useEffect, useState } from "react";
 import fetch from "isomorphic-unfetch";
-import { useAppDispatch } from "../frontend/store";
-import productListSlice from "../frontend/reducers/productReducers";
+import { useAppDispatch, RootState } from "../frontend/store";
 import { fetchProducts } from "../frontend/reducers/productReducers";
+import { useSelector } from "react-redux";
 const Home = () => {
   const dispatch = useAppDispatch();
-  const products = [];
+  const productList = useSelector((state: RootState) => state.productList);
+  const { loading, products, error } = productList;
 
   useEffect(() => {
     dispatch(fetchProducts());
