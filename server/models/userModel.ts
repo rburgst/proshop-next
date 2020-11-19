@@ -6,12 +6,14 @@ export interface ICreateUserInput {
   password: IUser["password"];
   isAdmin?: IUser["isAdmin"];
 }
-export interface IUser extends Document {
+export interface IUser {
   name: string;
   email: string;
   password: string;
   isAdmin: boolean;
 }
+export interface IUserDoc extends Document, IUser {}
+
 const userSchema = new mongoose.Schema(
   {
     name: {

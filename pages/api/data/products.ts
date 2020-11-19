@@ -1,15 +1,5 @@
-export interface IProduct {
-  _id?: string;
-  name: string;
-  image: string;
-  description: string;
-  brand: string;
-  category: string;
-  price: number;
-  countInStock: number;
-  rating: number;
-  numReviews: number;
-}
+import { IProduct } from "../../../server/models/productModel";
+
 const products: IProduct[] = [
   {
     name: "Airpods Wireless Bluetooth Headphones",
