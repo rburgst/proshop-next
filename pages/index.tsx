@@ -8,6 +8,8 @@ import fetch from "isomorphic-unfetch";
 import { useAppDispatch, RootState } from "../frontend/store";
 import { fetchProducts } from "../frontend/reducers/productReducers";
 import { useSelector } from "react-redux";
+import Loader from "../components/Loader";
+import Message from "../components/Message";
 const Home = () => {
   const dispatch = useAppDispatch();
   const productList = useSelector((state: RootState) => state.productList);
@@ -21,9 +23,9 @@ const Home = () => {
     <>
       <h1>Latest Products</h1>
       {loading ? (
-        <h2>Loading...</h2>
+        <Loader />
       ) : error ? (
-        <h3>{error}</h3>
+        <Message variant="danger">{error}</Message>
       ) : (
         <Row>
           {products.map((product) => (
