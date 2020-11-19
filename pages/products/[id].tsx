@@ -1,7 +1,20 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
+import React, {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
+import {
+  Button,
+  Card,
+  Col,
+  Form,
+  Image,
+  ListGroup,
+  Row,
+} from "react-bootstrap";
 import Rating from "../../components/Rating";
 import products from "../api/data/products";
 import { IProduct } from "../api/data/products";
@@ -25,11 +38,17 @@ const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
   );
   const { loading, product, error } = productDetails;
 
+  const [qty, setQty] = useState(0);
+
   useEffect(() => {
     if (id) {
       dispatch(fetchProduct(id as string));
     }
   }, [id, dispatch]);
+
+  const addToCartHandler = useCallback(() => {
+    router.push(`/cart/${id}?qty=${qty}`);
+  }, [router, id, qty]);
 
   return (
     <>
@@ -79,11 +98,34 @@ const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <Row>
+                      <Col>Qty</Col>
+                      <Col>
+                        <Form.Control
+                          as="select"
+                          value={qty}
+                          onChange={(e) => setQty(parseInt(e.target.value))}
+                        >
+                          {[...Array(product.countInStock).keys()].map((x) => (
+                            <option key={x + 1} value={x + 1}>
+                              {x + 1}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
+
                 <ListGroup.Item>
                   <Button
                     type="button"
                     className={"btn-block"}
                     disabled={product.countInStock === 0}
+                    onClick={addToCartHandler}
                   >
                     Add To Cart
                   </Button>

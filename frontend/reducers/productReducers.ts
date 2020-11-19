@@ -70,7 +70,7 @@ export type ProductDetailsState = {
 
 const initialProductDetailsState: ProductDetailsState = {
   loading: false,
-  product: { reviews: [] },
+  product: { reviews: [] } as IProduct,
 };
 
 export const productDetailsSlice = createSlice({
