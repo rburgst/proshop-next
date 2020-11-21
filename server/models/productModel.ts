@@ -19,7 +19,7 @@ export interface IReview {
   rating: number;
   comment: string;
 }
-interface IReviewDoc extends IReview, mongoose.Document {}
+export interface IReviewDoc extends IReview, mongoose.Document {}
 
 export interface IProduct {
   name: string;
@@ -36,13 +36,14 @@ export interface IProduct {
 }
 
 // see also https://hackernoon.com/how-to-link-mongoose-and-typescript-for-a-single-source-of-truth-94o3uqc
-interface IProductDoc extends IProduct, mongoose.Document {}
+export interface IProductDoc extends IProduct, mongoose.Document {}
 
 const ReviewSchemaFields: Record<keyof IReview, any> = {
   name: { type: String, required: true },
   rating: { type: Number, required: true },
   comment: { type: String, required: true },
 };
+
 const reviewSchema = new mongoose.Schema(ReviewSchemaFields, {
   timestamps: true,
 });
