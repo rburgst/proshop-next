@@ -12,7 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import Message from "../../components/Message";
 import { RootState, useAppDispatch } from "../../frontend/store";
-import { addToCart } from "../../frontend/reducers/cartReducers";
+import { addToCart, cartSlice } from "../../frontend/reducers/cartReducers";
 import { Variant } from "react-bootstrap/esm/types";
 import { useRouter } from "next/router";
 
@@ -28,7 +28,7 @@ const CartScreen: FunctionComponent<CartScreenProps> = () => {
 
   const onRemoveFromCartHandler = useCallback(
     (id) => {
-      console.log("removing", id);
+      dispatch(cartSlice.actions.removeItem(id));
     },
     [dispatch]
   );
