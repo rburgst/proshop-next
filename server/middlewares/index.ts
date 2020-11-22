@@ -46,7 +46,6 @@ const withMiddleware = (next: NextApiHandler) => async (
       message: err.message,
       stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
     });
-    // if any middleware fails, throws a 400 error
     return;
   }
 };

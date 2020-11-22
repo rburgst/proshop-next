@@ -20,6 +20,7 @@
     "colorts": "^0.1.63",
     "dotenv-flow": "^3.2.0",
     "isomorphic-unfetch": "^3.1.0",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.15",
     "next": "10.0.2",
     "react": "17.0.1",
@@ -33,6 +34,7 @@
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/dotenv-flow": "^3.1.0",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/mongoose": "^5.10.1",
     "@types/node": "^14.14.6",
     "@types/react": "^16.9.56",
