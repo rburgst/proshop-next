@@ -25,8 +25,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
           isAdmin: user.isAdmin,
           token: generateToken(user._id),
         });
+        return;
       }
-      return;
     }
 
     res.statusCode = 401;
