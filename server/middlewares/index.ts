@@ -1,34 +1,46 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
 
-const {
-  cookieKey,
-  DOMAIN,
-  inDevelopment,
-  inProduction,
-  inStaging,
-} = process.env;
+export declare type MiddlewareFunction<
+  REQ extends NextApiRequest = NextApiRequest,
+  T = any
+> = (req: REQ, res: NextApiResponse<T>, next: any) => void | Promise<void>;
 
-const helloMiddleware = (req: NextApiRequest, res: NextApiResponse, next) => {
+const logRequestMiddleware: MiddlewareFunction = (
+  req: NextApiRequest,
+  res: NextApiResponse,
+  next
+) => {
   console.log(req.url);
   next();
 };
 
-const withMiddleware = (next: NextApiHandler) => async (
+async function applyMiddleware(
+  middleware: MiddlewareFunction,
   req: NextApiRequest,
   res: NextApiResponse
-) => {
+): Promise<any> {
+  const result = middleware(req, res, (result: any) => {
+    if (result instanceof Error) {
+      throw result;
+    }
+  });
+  return result;
+}
+
+const withMiddleware = (
+  next: NextApiHandler,
+  ...aditionalMiddlewares: MiddlewareFunction[]
+) => async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     // creates a list of middlewares (not required, but also filters any conditional
     // middlewares based upon current ENV)
-    const middlewares = [helloMiddleware].filter(Boolean);
+    const middlewares = [logRequestMiddleware, ...aditionalMiddlewares].filter(
+      Boolean
+    );
 
     // each middleware will then be wrapped within its own promise
     const promises = middlewares.reduce((acc, middleware) => {
-      const promise = new Promise((resolve, reject) => {
-        middleware(req, res, (result: any) =>
-          result instanceof Error ? reject(result) : resolve(result)
-        );
-      });
+      const promise = applyMiddleware(middleware, req, res);
       return [...acc, promise];
     }, []);
 
