@@ -24,7 +24,7 @@ const Header = () => {
                 </Nav.Link>
               </Link>
               <Link href="/login">
-                <Nav.Link>
+                <Nav.Link as="a" href="/login">
                   <i className="fas fa-user"></i> Login
                 </Nav.Link>
               </Link>
