@@ -5,18 +5,18 @@ const users: ICreateUserInput[] = [
   {
     name: "Admin User",
     email: "admin@example.com",
-    password: bcrypt.hashSync("123456", 10),
+    password: "123456",
     isAdmin: true,
   },
   {
     name: "John Doe",
     email: "john@example.com",
-    password: bcrypt.hashSync("123456", 10),
+    password: "123456",
   },
   {
     name: "Jane Doe",
     email: "jane@example.com",
-    password: bcrypt.hashSync("123456", 10),
+    password: "123456",
   },
 ];
 

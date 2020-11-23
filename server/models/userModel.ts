@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, Model } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface ICreateUserInput {
@@ -49,7 +49,18 @@ userSchema.methods.matchPassword = async function (
   return await bcrypt.compare(givenPassword, this.password);
 };
 
+userSchema.pre<IUserDoc>("save", async function (next) {
+  if (!this.isModified("password")) {
+    next();
+  } else {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  }
+});
+
 // const User = mongoose.model<IUser>("User", userSchema);
 // see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
-export default mongoose.models.User ??
-  mongoose.model<IUserDoc>("User", userSchema);
+const User: Model<IUserDoc> =
+  mongoose.models.User ?? mongoose.model<IUserDoc>("User", userSchema);
+export default User;
