@@ -1,8 +1,17 @@
-import React from "react";
-import { Container, Nav, Navbar } from "react-bootstrap";
+import React, { useCallback } from "react";
+import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "../frontend/store";
+import { userLoginSlice } from "../frontend/reducers/userReducers";
 
 const Header = () => {
+  const userLogin = useSelector((state: RootState) => state.userLogin);
+  const { userInfo } = userLogin;
+  const dispatch = useAppDispatch();
+  const logoutHandler = useCallback(() => {
+    dispatch(userLoginSlice.actions.logout());
+  }, [dispatch]);
   return (
     <header>
       <Navbar bg="dark" variant="dark" collapseOnSelect expand="lg">
@@ -23,11 +32,24 @@ const Header = () => {
                   <i className="fas fa-shopping-cart"></i> Cart
                 </Nav.Link>
               </Link>
-              <Link href="/login">
-                <Nav.Link as="a" href="/login">
-                  <i className="fas fa-user"></i> Login
-                </Nav.Link>
-              </Link>
+              {userInfo ? (
+                <NavDropdown title={userInfo.name} id="username">
+                  <Link href="/profile">
+                    <NavDropdown.Item as="a" href="/profile">
+                      Profile
+                    </NavDropdown.Item>
+                  </Link>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
+                </NavDropdown>
+              ) : (
+                <Link href="/login">
+                  <Nav.Link as="a" href="/login">
+                    <i className="fas fa-user"></i> Login
+                  </Nav.Link>
+                </Link>
+              )}
             </Nav>
           </Navbar.Collapse>
         </Container>

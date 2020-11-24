@@ -6,7 +6,7 @@ import {
   EnhancedStore,
   getDefaultMiddleware,
 } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
+import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { cartSlice } from "./reducers/cartReducers";
 import {
   productListSlice,

@@ -38,7 +38,7 @@ export const userLoginSlice = createSlice({
   initialState: initialUserLoginState,
   reducers: {
     logout: (state, action: PayloadAction<void>) => {
-      state = { loading: false };
+      return initialUserLoginState;
     },
   },
   extraReducers: (builder) => {
