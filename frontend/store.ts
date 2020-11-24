@@ -1,10 +1,12 @@
 import {
+  Action,
   AnyAction,
   combineReducers,
   configureStore,
   DeepPartial,
   EnhancedStore,
   getDefaultMiddleware,
+  ThunkAction,
 } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { cartSlice } from "./reducers/cartReducers";
@@ -16,7 +18,7 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { useMemo } from "react";
 import { ThunkMiddlewareFor } from "@reduxjs/toolkit/src/getDefaultMiddleware";
-import { userLoginSlice } from "./reducers/userReducers";
+import { userLoginSlice, userRegisterSlice } from "./reducers/userReducers";
 import {
   FLUSH,
   PAUSE,
@@ -49,6 +51,7 @@ const rootReducer = combineReducers({
   productDetails: productDetailsSlice.reducer,
   cart: persistReducer(cartPersistConfig, cartSlice.reducer),
   userLogin: persistReducer(userLoginPersistConfig, userLoginSlice.reducer),
+  userRegister: userRegisterSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
@@ -111,3 +114,4 @@ export function useStore(initialState: DeepPartial<RootState>) {
 
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
+export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>;

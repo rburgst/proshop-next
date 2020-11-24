@@ -1,16 +1,16 @@
+import Link from "next/link";
 import React, { useCallback } from "react";
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import Link from "next/link";
 import { useSelector } from "react-redux";
+import { logout } from "../frontend/reducers/userReducers";
 import { RootState, useAppDispatch } from "../frontend/store";
-import { userLoginSlice } from "../frontend/reducers/userReducers";
 
 const Header = () => {
   const userLogin = useSelector((state: RootState) => state.userLogin);
   const { userInfo } = userLogin;
   const dispatch = useAppDispatch();
   const logoutHandler = useCallback(() => {
-    dispatch(userLoginSlice.actions.logout());
+    dispatch(logout());
   }, [dispatch]);
   return (
     <header>
