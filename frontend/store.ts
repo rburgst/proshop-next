@@ -18,6 +18,7 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { useMemo } from "react";
 import { ThunkMiddlewareFor } from "@reduxjs/toolkit/src/getDefaultMiddleware";
+import { userUpdateProfileSlice } from "./reducers/userReducers";
 import {
   userLoginSlice,
   userRegisterSlice,
@@ -57,6 +58,7 @@ const rootReducer = combineReducers({
   userLogin: persistReducer(userLoginPersistConfig, userLoginSlice.reducer),
   userRegister: userRegisterSlice.reducer,
   userDetails: userDetailsSlice.reducer,
+  userUpdateProfile: userUpdateProfileSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

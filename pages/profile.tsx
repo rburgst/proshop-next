@@ -17,6 +17,10 @@ import {
   getUserDetails,
 } from "../frontend/reducers/userReducers";
 import { RootState, useAppDispatch } from "../frontend/store";
+import {
+  updateUserProfile,
+  userUpdateProfileSlice,
+} from "../frontend/reducers/userReducers";
 
 export interface ProfileScreenProps {
   redirect?: string;
@@ -36,20 +40,25 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
   const { loading, user, error } = userDetails;
   const userLogin = useSelector((state: RootState) => state.userLogin);
   const { userInfo } = userLogin;
+  const userUpdateProfile = useSelector(
+    (state: RootState) => state.userUpdateProfile
+  );
+  const { success } = userUpdateProfile;
 
   useEffect(() => {
     // redirect to login if not logged in
     if (!userInfo) {
       router.push("/login");
     }
-    if (!user?.name) {
-      // dont have user details yet
+    if (!user?.name || success) {
+      // dont have user details yet or we have updated the user profile
+      dispatch(userUpdateProfileSlice.actions.reset());
       dispatch(getUserDetails("profile"));
     } else {
       setName(user.name);
       setEmail(user.email);
     }
-  }, [userInfo, user, router, dispatch]);
+  }, [userInfo, success, user, router, dispatch]);
 
   const submitHandler = useCallback(
     (e: SyntheticEvent<HTMLFormElement>) => {
@@ -60,7 +69,7 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
       } else {
         setMessage("");
 
-        // DISPATCH update profile
+        dispatch(updateUserProfile({ name, email, password }));
       }
     },
     [dispatch, name, email, password, confirmPassword]
@@ -71,6 +80,7 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
       <Col md={3}>
         <h2>User Profile</h2>
         {message && <Message variant="danger">{message}</Message>}
+        {success && <Message variant="success">Profile updated</Message>}
         {error && <Message variant="danger">{error}</Message>}
         {loading && <Loader />}
         <Form onSubmit={submitHandler}>

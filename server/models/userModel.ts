@@ -15,6 +15,7 @@ export interface IUser {
 
   matchPassword(givenPassword: string): Promise<boolean>;
 }
+
 export interface IUserDoc extends Document, IUser {}
 
 const userSchema = new mongoose.Schema(

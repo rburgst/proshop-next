@@ -5,7 +5,6 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
 import { IUser } from "../../server/models/userModel";
 import { RootState } from "../store";
 
@@ -32,7 +31,7 @@ export const loginUser = createAsyncThunk<
 });
 
 export const registerUser = createAsyncThunk<
-  IUser,
+  IUserWithId,
   { name: string; email: string; password: string }
 >("USER_REGISTER", async (args, thunkAPI) => {
   const { name, email, password } = args;
@@ -50,11 +49,15 @@ export const registerUser = createAsyncThunk<
   return user;
 });
 
-export const getUserDetails = createAsyncThunk<IUser, string>(
+export const getUserDetails = createAsyncThunk<IUserWithId, string>(
   "USER_DETAILS",
   async (userId, thunkAPI) => {
     const finalId = userId ?? "profile";
     const state: RootState = thunkAPI.getState() as RootState;
+    console.log("got root login state", state.userLogin);
+    if (!state.userLogin.userInfo) {
+      throw new Error("getUserDetails without logged in user");
+    }
     const token = state.userLogin.userInfo!.token;
 
     const response = await fetch(`/api/users/${finalId}`, {
@@ -66,14 +69,45 @@ export const getUserDetails = createAsyncThunk<IUser, string>(
     if (!response.ok) {
       throw new Error(data?.message ?? response.statusText);
     }
-    const user = data as IUser;
+    const user = data as IUserWithId;
     return user;
   }
 );
 
-export interface IUserWithToken extends IUser {
+export const updateUserProfile = createAsyncThunk<
+  IUserWithId,
+  { name: string; email: string; password: string }
+>("USER_PROFILE_UPDATE", async (user, thunkAPI) => {
+  const { name, email, password } = user;
+  const state: RootState = thunkAPI.getState() as RootState;
+  const token = state.userLogin.userInfo!.token;
+
+  const response = await fetch(`/api/users/profile`, {
+    body: JSON.stringify({ email, password, name }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    method: "PUT",
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.message ?? response.statusText);
+  }
+  const updatedUser = data as IUserWithId;
+  thunkAPI.dispatch(
+    userLoginSlice.actions.loginSuccess({ ...updatedUser, token })
+  );
+  return updatedUser;
+});
+
+export interface IUserWithId extends IUser {
+  _id: string;
+}
+export interface IUserWithToken extends IUserWithId {
   token: string;
 }
+
 // slice
 export interface UserLoginState {
   loading: boolean;
@@ -190,6 +224,55 @@ export const userDetailsSlice = createSlice({
     builder.addCase(getUserDetails.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
+    });
+  },
+});
+
+export interface UserUpdateProfileState {
+  loading: boolean;
+  userInfo?: IUser;
+  error?: string;
+  success: boolean;
+}
+
+const initialUserUpdateProfileState: UserUpdateProfileState = {
+  loading: false,
+  userInfo: undefined,
+  error: undefined,
+  success: false,
+};
+
+export const userUpdateProfileSlice = createSlice({
+  name: "userUpdateProfile",
+  initialState: initialUserUpdateProfileState,
+  reducers: {
+    reset: (state, action: PayloadAction<void>) => {
+      state.userInfo = undefined;
+      state.error = undefined;
+      state.success = false;
+      state.loading = false;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout, (state) => {
+      state.userInfo = null;
+      state.error = undefined;
+      state.success = false;
+    });
+    builder.addCase(updateUserProfile.pending, (state) => {
+      state.loading = true;
+      state.userInfo = undefined;
+      state.success = false;
+    });
+    builder.addCase(updateUserProfile.fulfilled, (state, { payload }) => {
+      state.loading = false;
+      state.userInfo = payload;
+      state.success = true;
+    });
+    builder.addCase(updateUserProfile.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+      state.success = false;
     });
   },
 });
