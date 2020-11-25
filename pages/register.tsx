@@ -96,7 +96,7 @@ const RegisterScreen: FunctionComponent<RegisterScreenProps> = () => {
           ></Form.Control>
         </Form.Group>
         <Button type="submit" variant="primary">
-          Sign in
+          Register
         </Button>
         <Row className="py-3">
           <Col>

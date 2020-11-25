@@ -18,7 +18,11 @@ import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { useMemo } from "react";
 import { ThunkMiddlewareFor } from "@reduxjs/toolkit/src/getDefaultMiddleware";
-import { userLoginSlice, userRegisterSlice } from "./reducers/userReducers";
+import {
+  userLoginSlice,
+  userRegisterSlice,
+  userDetailsSlice,
+} from "./reducers/userReducers";
 import {
   FLUSH,
   PAUSE,
@@ -52,6 +56,7 @@ const rootReducer = combineReducers({
   cart: persistReducer(cartPersistConfig, cartSlice.reducer),
   userLogin: persistReducer(userLoginPersistConfig, userLoginSlice.reducer),
   userRegister: userRegisterSlice.reducer,
+  userDetails: userDetailsSlice.reducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
