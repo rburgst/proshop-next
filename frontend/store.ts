@@ -44,7 +44,7 @@ let store: StoreType;
 const cartPersistConfig = {
   key: "cart",
   storage,
-  whitelist: ["cartItems"], // place to select which state you want to persist
+  whitelist: ["cartItems", "shippingAddress"], // place to select which state you want to persist
 };
 const userLoginPersistConfig = {
   key: "userLogin",

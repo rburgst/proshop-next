@@ -11,8 +11,17 @@ export interface CartItem {
   price: number;
   qty: number;
 }
+
+export interface ShippingAddress {
+  address: string;
+  postalCode: string;
+  city: string;
+  country: string;
+}
+
 export interface CartState {
   cartItems: CartItem[];
+  shippingAddress?: ShippingAddress;
 }
 
 const initialCartState: CartState = {
@@ -20,7 +29,7 @@ const initialCartState: CartState = {
 };
 
 export const cartSlice = createSlice({
-  name: "cartSlice",
+  name: "cart",
   initialState: initialCartState,
   reducers: {
     addItem: (state: CartState, action: PayloadAction<CartItem>) => {
@@ -41,6 +50,12 @@ export const cartSlice = createSlice({
       state.cartItems = state.cartItems.filter(
         (item) => item.product !== action.payload
       );
+    },
+    saveShippingAddress: (
+      state: CartState,
+      action: PayloadAction<ShippingAddress>
+    ) => {
+      state.shippingAddress = action.payload;
     },
   },
 });
