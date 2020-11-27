@@ -37,6 +37,7 @@ import {
   userUpdateProfileSlice,
 } from "./reducers/userReducers";
 import { MakeStore, createWrapper, Context, HYDRATE } from "next-redux-wrapper";
+import { orderCreateSlice } from "./reducers/orderReducers";
 
 export type StoreType = EnhancedStore<
   RootState,
@@ -81,6 +82,7 @@ function createReducer(isServer: boolean): Reducer {
     userRegister: userRegisterSlice.reducer,
     userDetails: userDetailsSlice.reducer,
     userUpdateProfile: userUpdateProfileSlice.reducer,
+    orderCreate: orderCreateSlice.reducer,
   });
   return rootReducer;
 }

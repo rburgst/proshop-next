@@ -1,6 +1,6 @@
-import mongoose, { Types } from "mongoose";
+import mongoose, { Model, Types } from "mongoose";
 import { IUserDoc } from "./userModel";
-type ID = Types.ObjectId;
+export type ID = Types.ObjectId;
 
 export interface ICreateProductInput {
   name: IProduct["name"];
@@ -104,5 +104,7 @@ const productSchema = new mongoose.Schema(ProductSchemaFields, {
 //const Product = mongoose.model("Product", productSchema);
 
 // see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
-export default mongoose.models.Product ??
+const Product: Model<IProductDoc> =
+  mongoose.models.Product ??
   mongoose.model<IProductDoc>("Product", productSchema);
+export default Product;

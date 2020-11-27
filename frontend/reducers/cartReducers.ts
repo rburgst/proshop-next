@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ShippingAddress } from "../../server/models/models";
 import { IProduct, IProductDoc } from "../../server/models/productModel";
 import { RootState } from "../store";
 
@@ -10,13 +11,6 @@ export interface CartItem {
   countInStock: number;
   price: number;
   qty: number;
-}
-
-export interface ShippingAddress {
-  address: string;
-  postalCode: string;
-  city: string;
-  country: string;
 }
 
 export interface CartState {

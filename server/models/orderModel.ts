@@ -1,4 +1,44 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose, { Model, MongooseDocument } from "mongoose";
+import { ShippingAddress } from "./models";
+import { ID } from "./productModel";
+import { IUserDoc } from "./userModel";
+
+export interface PaymentResult {
+  id: string;
+  status: string;
+  update_time: string;
+  email_address: string;
+}
+export interface OrderItem {
+  name: string;
+  qty: number;
+  image: string;
+  price: number;
+  product: ID;
+}
+export interface IOrder {
+  user: ID | IUserDoc;
+  orderItems: OrderItem[];
+
+  shippingAddress: ShippingAddress;
+  paymentMethod: string;
+  paymentResult: PaymentResult;
+  taxPrice: number;
+  shippingPrice: number;
+  totalPrice: number;
+  isPaid: boolean;
+  paidAt: Date;
+  isDelivered: boolean;
+  deliveredAt: Date;
+}
+export interface IOrderInput {
+  orderItems: OrderItem[];
+
+  shippingAddress: ShippingAddress;
+  paymentMethod: string;
+}
+
+export interface IOrderDoc extends IOrder, mongoose.Document {}
 
 const orderSchema = new mongoose.Schema(
   {
@@ -13,7 +53,7 @@ const orderSchema = new mongoose.Schema(
           type: String,
           required: true,
         },
-        qry: {
+        qty: {
           type: Number,
           required: true,
         },
@@ -85,6 +125,6 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-//const Order = mongoose.model("Order", orderSchema);
-// see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
-export default mongoose.models.Order ?? mongoose.model("Order", orderSchema);
+const Order: Model<IOrderDoc> =
+  mongoose.models.Order ?? mongoose.model("Order", orderSchema);
+export default Order;

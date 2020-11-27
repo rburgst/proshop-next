@@ -7,9 +7,13 @@ import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
 import { CartItem, CartState } from "../frontend/reducers/cartReducers";
 import { RootState, useAppDispatch } from "../frontend/store";
-import { useMemo } from "react";
-
-const taxRate = 0.2;
+import { useMemo, useEffect } from "react";
+import { calculatePrices } from "../server/utils/prices";
+import {
+  createOrder,
+  OrderCreateState,
+} from "../frontend/reducers/orderReducers";
+import { OrderItem } from "../server/models/orderModel";
 
 const PlaceOrderScreen: FunctionComponent = () => {
   const cart: CartState = useSelector((state: RootState) => state.cart);
@@ -20,32 +24,35 @@ const PlaceOrderScreen: FunctionComponent = () => {
       (acc, cur) => acc + cur.qty * cur.price,
       0
     );
-    const shippingPrice = Number(itemsPrice > 100 ? 0 : 10).toFixed(2);
-    const taxPrice = Number(taxRate * itemsPrice).toFixed(2);
-    const totalPrice = Number(
-      Number(itemsPrice) + Number(shippingPrice) + Number(taxPrice)
-    ).toFixed(2);
-    return { itemsPrice, shippingPrice, taxPrice, totalPrice };
+    return calculatePrices(itemsPrice);
   }, [cartItems]);
 
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   if (!shippingAddress) {
-  //     router.push("/shipping");
-  //   }
-  // }, [router, shippingAddress]);
-
-  const placeOrderHandler = useCallback(
-    (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      console.log("place order");
-      //router.push("/placeorder");
-    },
-
-    [dispatch, router]
+  const orderCreate = useSelector(
+    (state: RootState) => state.orderCreate as OrderCreateState
   );
+  const { order, error, success } = orderCreate;
+
+  // if we placed the order successfully, redirect to order screen
+  useEffect(() => {
+    if (success) {
+      router.push(`/orders/${order._id}`);
+    }
+  }, [router, success, order]);
+
+  const placeOrderHandler = useCallback(() => {
+    console.log("place order");
+
+    dispatch(
+      createOrder({
+        orderItems: (cart.cartItems as unknown) as OrderItem[],
+        shippingAddress: cart.shippingAddress,
+        paymentMethod: cart.paymentMethod,
+      })
+    );
+  }, [dispatch, router, cart]);
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
@@ -133,6 +140,9 @@ const PlaceOrderScreen: FunctionComponent = () => {
                   <Col>Total</Col>
                   <Col>${cartPrices.totalPrice}</Col>
                 </Row>
+              </ListGroup.Item>
+              <ListGroup.Item>
+                {error && <Message variant="danger">{error}</Message>}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Button
