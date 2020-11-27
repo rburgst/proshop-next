@@ -22,10 +22,12 @@ export interface ShippingAddress {
 export interface CartState {
   cartItems: CartItem[];
   shippingAddress?: ShippingAddress;
+  paymentMethod?: string;
 }
 
 const initialCartState: CartState = {
   cartItems: [],
+  paymentMethod: "PayPal",
 };
 
 export const cartSlice = createSlice({
@@ -56,6 +58,9 @@ export const cartSlice = createSlice({
       action: PayloadAction<ShippingAddress>
     ) => {
       state.shippingAddress = action.payload;
+    },
+    savePaymentMethod: (state: CartState, action: PayloadAction<string>) => {
+      state.paymentMethod = action.payload;
     },
   },
 });

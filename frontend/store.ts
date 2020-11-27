@@ -58,7 +58,7 @@ function createReducer(isServer: boolean): Reducer {
   const cartPersistConfig = {
     key: "cart",
     storage,
-    whitelist: ["cartItems", "shippingAddress"], // place to select which state you want to persist
+    whitelist: ["cartItems", "shippingAddress", "paymentMethod"], // place to select which state you want to persist
   };
   const userLoginPersistConfig = {
     key: "userLogin",
@@ -112,54 +112,6 @@ const makeStore = () => {
   }
   return store;
 };
-
-// function makeStore(initialState: DeepPartial<RootState>): StoreType {
-//   const enhancedStore = (configureStore<RootState>({
-//     reducer: rootReducer,
-//     // @ts-ignore: cant be bothered right now
-//     middleware: getDefaultMiddleware<RootState>({
-//       thunk: true,
-//       immutableCheck: true,
-//       // @ts-ignore: wrong typescript for this
-//       serializableCheck: {
-//         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-//       },
-//     }),
-//     devTools: true,
-//     preloadedState: initialState,
-//   }) as unknown) as StoreType;
-//   return enhancedStore;
-// }
-
-// export const initializeStore = (
-//   preloadedState: DeepPartial<RootState>
-// ): StoreType => {
-//   let _store: StoreType = store ?? makeStore(preloadedState);
-
-//   // After navigating to a page with an initial Redux state, merge that state
-//   // with the current state in the store, and create a new store
-//   if (preloadedState && store) {
-//     let combinedInitialState = {
-//       ...store.getState(),
-//       ...preloadedState,
-//     } as DeepPartial<RootState>;
-//     _store = makeStore(combinedInitialState);
-//     // Reset the current store
-//     store = undefined;
-//   }
-
-//   // For SSG and SSR always create a new store
-//   if (typeof window === "undefined") return _store;
-//   // Create the store once in the client
-//   if (!store) store = _store;
-
-//   return _store;
-// };
-
-// export function useStore(initialState: DeepPartial<RootState>) {
-//   const store = useMemo(() => initializeStore(initialState), [initialState]);
-//   return store;
-// }
 
 export const wrapper = createWrapper<RootState>(makeStore, { debug: true });
 

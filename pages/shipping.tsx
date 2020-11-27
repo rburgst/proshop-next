@@ -6,6 +6,7 @@ import { useAppDispatch, RootState } from "../frontend/store";
 import { cartSlice } from "../frontend/reducers/cartReducers";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import CheckoutSteps from "../components/CheckoutSteps";
 
 const ShippingScreen: FunctionComponent = () => {
   const cart = useSelector((state: RootState) => state.cart);
@@ -30,13 +31,15 @@ const ShippingScreen: FunctionComponent = () => {
           country,
         })
       );
-      //router.push("/payment");
+      router.push("/payment");
     },
 
-    [dispatch, router]
+    [dispatch, router, address, city, postalCode, country]
   );
   return (
     <FormContainer>
+      <CheckoutSteps step1 step2 />
+      <h2>Shipping</h2>
       <Form onSubmit={submitHandler}>
         <Form.Group controlId="address">
           <Form.Label>Address</Form.Label>
