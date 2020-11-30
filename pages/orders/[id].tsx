@@ -1,5 +1,10 @@
-import React, { useMemo } from "react";
-import { FunctionComponent, useEffect } from "react";
+import React, {
+  useMemo,
+  useState,
+  useCallback,
+  FunctionComponent,
+  useEffect,
+} from "react";
 import { useSelector } from "react-redux";
 import {
   OrderDetailsState,
@@ -13,32 +18,74 @@ import { Col, ListGroup, Row, Image, Card, Button } from "react-bootstrap";
 import { OrderItem } from "../../server/models/orderModel";
 import Link from "next/link";
 import { IUserWithId } from "../../frontend/reducers/userReducers";
+import fetch from "isomorphic-unfetch";
+import { GetServerSideProps } from "next";
+import { env } from "process";
+import {
+  OrderPayState,
+  payOrder,
+  orderPaySlice,
+} from "../../frontend/reducers/orderReducers";
+import { PayPalButton } from "react-paypal-button-v2";
 
-const OrderScreen: FunctionComponent = () => {
+interface OrderScreenProps {
+  clientId: string;
+}
+
+const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
+  const [sdkReady, setSdkReady] = useState(false);
   const orderDetails = useSelector(
     (state: RootState) => state.orderDetails as OrderDetailsState
   );
   const { order, loading, error } = orderDetails;
+  const orderPay = useSelector(
+    (state: RootState) => state.orderPay as OrderPayState
+  );
+  const { loading: loadingPay, success: successPay } = orderPay;
 
   const router = useRouter();
   const orderId = router.query.id as string;
   const dispatch = useAppDispatch();
   useEffect(() => {
+    console.log("ClientId from props", clientId);
     console.log(
       "useEffect orderId",
       orderId,
       "loading",
       loading,
+      "successPay",
+      successPay,
       "order",
       order
     );
+
+    const addPaypalScript = async () => {
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.async = true;
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+      script.onload = () => {
+        setSdkReady(true);
+      };
+      document.body.appendChild(script);
+    };
+
     if (orderId && !loading) {
-      if (!order || order._id !== orderId) {
+      if (!order || order._id !== orderId || successPay) {
+        console.log("dispatch reset");
+        dispatch(orderPaySlice.actions.reset());
         console.log("dispatch loading", orderId);
         dispatch(getOrderDetails(orderId));
+      } else if (!order.isPaid) {
+        // @ts-ignore: this is added by the paypal script
+        if (!window.paypal) {
+          addPaypalScript();
+        } else {
+          setSdkReady(true);
+        }
       }
     }
-  }, [orderId, dispatch, order]);
+  }, [orderId, dispatch, order, clientId, successPay]);
   const itemsPrice = useMemo(() => {
     if (order?.orderItems) {
       const itemsPrice = order.orderItems.reduce(
@@ -51,6 +98,14 @@ const OrderScreen: FunctionComponent = () => {
     }
   }, [order?.orderItems]);
   const orderUser: IUserWithId = order?.user as IUserWithId;
+
+  const successPaymentHandler = useCallback(
+    (paymentResult) => {
+      console.log("paymentResult", paymentResult);
+      dispatch(payOrder({ orderId, paymentResult }));
+    },
+    [dispatch, orderId]
+  );
 
   return loading ? (
     <Loader />
@@ -166,9 +221,19 @@ const OrderScreen: FunctionComponent = () => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
-                {error && <Message variant="danger">{error}</Message>}
-              </ListGroup.Item>
+              {!order.isPaid && (
+                <ListGroup.Item>
+                  {loadingPay && <Loader />}
+                  {!sdkReady ? (
+                    <Loader />
+                  ) : (
+                    <PayPalButton
+                      amount={order.totalPrice}
+                      onSuccess={successPaymentHandler}
+                    ></PayPalButton>
+                  )}
+                </ListGroup.Item>
+              )}
             </ListGroup>
           </Card>
         </Col>
@@ -177,4 +242,7 @@ const OrderScreen: FunctionComponent = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return { props: { clientId: process.env.PAYPAL_CLIENT_ID } };
+};
 export default OrderScreen;

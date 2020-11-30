@@ -1,20 +1,19 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
-import { NextApiRequest, NextApiResponse } from "next";
-import productModel from "../../../server/models/productModel";
-import connectDB from "../../../server/config/db";
-import withMiddleware from "../../../server/middlewares";
+import { NextApiResponse } from "next";
+import connectDB from "../../../../server/config/db";
+import withMiddleware from "../../../../server/middlewares";
 import {
-  protect,
   NextApiRequestWithUser,
-} from "../../../server/middlewares/authMiddleware";
-import Order from "../../../server/models/orderModel";
-import { IUserDoc } from "../../../server/models/userModel";
+  protect,
+} from "../../../../server/middlewares/authMiddleware";
+import Order from "../../../../server/models/orderModel";
+import { IUserDoc } from "../../../../server/models/userModel";
 
 const handler = async (req: NextApiRequestWithUser, res: NextApiResponse) => {
   if (req.method === "GET") {
-    const conn = await connectDB();
     console.log("get single product by id", req.query.id, "user", req.user);
+    const conn = await connectDB();
     const order = await Order.findById(req.query.id).populate(
       "user",
       "name email"

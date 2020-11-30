@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import { MiddlewareFunction } from ".";
 import User from "../models/userModel";
 import { IUserDoc } from "../models/userModel";
+import { connect } from "http2";
+import connectDB from "../config/db";
 
 export interface NextApiRequestWithUser extends NextApiRequest {
   user?: IUserDoc;
@@ -17,6 +19,7 @@ export const protect: MiddlewareFunction<NextApiRequestWithUser> = async (
   if (authHeader?.startsWith("Bearer")) {
     const token = authHeader.split(" ")[1];
     try {
+      await connectDB();
       const decoded: any = jwt.verify(token, process.env.JWT_SECRET);
       console.log("token found ", decoded);
       req.user = await User.findById(decoded.id).select("-password");
