@@ -30,6 +30,8 @@ export interface IOrder {
   paidAt: Date;
   isDelivered: boolean;
   deliveredAt: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 export interface IOrderInput {
   orderItems: OrderItem[];

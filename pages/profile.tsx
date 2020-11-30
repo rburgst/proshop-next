@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
+import { Button, Col, Form, Row, Table } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import FormContainer from "../components/FormContainer";
 import Loader from "../components/Loader";
@@ -17,10 +17,16 @@ import {
   getUserDetails,
 } from "../frontend/reducers/userReducers";
 import { RootState, useAppDispatch } from "../frontend/store";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  OrderListMyState,
+  listMyOrders,
+} from "../frontend/reducers/orderReducers";
 import {
   updateUserProfile,
   userUpdateProfileSlice,
 } from "../frontend/reducers/userReducers";
+import { time } from "console";
 
 export interface ProfileScreenProps {
   redirect?: string;
@@ -33,7 +39,6 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
   const [message, setMessage] = useState("");
 
   const router = useRouter();
-  const redirect = (router.query.redirect as string) ?? "/";
   const dispatch = useAppDispatch();
 
   const userDetails = useSelector((state: RootState) => state.userDetails);
@@ -44,6 +49,14 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
     (state: RootState) => state.userUpdateProfile
   );
   const { success } = userUpdateProfile;
+  const orderListMy = useSelector(
+    (state: RootState) => state.orderListMy as OrderListMyState
+  );
+  const {
+    loading: loadingMyOrders,
+    error: errorMyOrders,
+    orders,
+  } = orderListMy;
 
   useEffect(() => {
     // redirect to login if not logged in
@@ -54,6 +67,7 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
       // dont have user details yet or we have updated the user profile
       dispatch(userUpdateProfileSlice.actions.reset());
       dispatch(getUserDetails("profile"));
+      dispatch(listMyOrders());
     } else {
       setName(user.name);
       setEmail(user.email);
@@ -126,6 +140,58 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
       </Col>
       <Col md={9}>
         <h2>My Orders</h2>
+        {loadingMyOrders ? (
+          <Loader />
+        ) : errorMyOrders ? (
+          <Message variant="danger">{errorMyOrders}</Message>
+        ) : (
+          <Table striped bordered hover responsive className="table-sm">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>DATE</th>
+                <th>TOTAL</th>
+                <th>PAID</th>
+                <th>DELIVERED</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order._id}>
+                  <td>{order._id}</td>
+                  <td>{order.createdAt.substring(0, 10)}</td>
+                  <td>{order.totalPrice}</td>
+                  <td>
+                    {order.isPaid ? (
+                      order.paidAt.toString().substring(0, 10)
+                    ) : (
+                      <FontAwesomeIcon icon={"times"} color="red" />
+                    )}
+                  </td>
+                  <td>
+                    {order.isDelivered ? (
+                      order.isDelivered.toString().substring(0, 10)
+                    ) : (
+                      <FontAwesomeIcon icon={"times"} color="red" />
+                    )}
+                  </td>
+                  <td>
+                    <Link href={`/orders/${order._id}`}>
+                      <Button
+                        as="a"
+                        href={`/orders/${order._id}`}
+                        variant="light"
+                        className="btn-sm"
+                      >
+                        Details
+                      </Button>
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
       </Col>
     </Row>
   );

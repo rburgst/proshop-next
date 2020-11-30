@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAction,
+  createAsyncThunk,
+  createSlice,
+  PayloadAction,
+} from "@reduxjs/toolkit";
 import { ShippingAddress } from "../../server/models/models";
 import { IProduct, IProductDoc } from "../../server/models/productModel";
 import { RootState } from "../store";
@@ -8,7 +13,7 @@ import {
   OrderItem,
   PaymentResult,
 } from "../../server/models/orderModel";
-import { UserLoginState } from "./userReducers";
+import { logout, UserLoginState } from "./userReducers";
 
 // action thunks
 
@@ -64,6 +69,31 @@ export const getOrderDetails = createAsyncThunk<IOrderWithId, string>(
   }
 );
 
+export const listMyOrders = createAsyncThunk<IOrderWithId[]>(
+  "ORDER_LIST_MY",
+  async (args, thunkAPI) => {
+    const state: RootState = thunkAPI.getState();
+    const userLogin: UserLoginState = state.userLogin;
+    const token = userLogin.userInfo?.token;
+
+    if (!token) {
+      throw new Error("no user login token");
+    }
+    const response = await fetch(`/api/orders/myorders`, {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText);
+    }
+    const order = data as IOrderWithId[];
+    return order;
+  }
+);
+
 export interface PayData {
   paymentResult: PaymentResult;
   orderId: string;
@@ -114,7 +144,14 @@ const initialOrderCreateState: OrderCreateState = { loading: false };
 export const orderCreateSlice = createSlice({
   name: "orderCreate",
   initialState: initialOrderCreateState,
-  reducers: {},
+  reducers: {
+    reset: (state, _: PayloadAction<void>) => {
+      state.error = undefined;
+      state.loading = false;
+      state.order = undefined;
+      state.success = false;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(createOrder.pending, (state) => {
       state.loading = true;
@@ -179,7 +216,7 @@ export const orderPaySlice = createSlice({
   name: "orderPay",
   initialState: initialOrderPayState,
   reducers: {
-    reset: (state, action: PayloadAction<void>) => {
+    reset: (state) => {
       state.error = undefined;
       state.loading = false;
       state.order = undefined;
@@ -199,6 +236,42 @@ export const orderPaySlice = createSlice({
     builder.addCase(payOrder.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
+    });
+  },
+});
+
+export interface OrderListMyState {
+  loading: boolean;
+  orders: IOrderWithId[];
+  error?: string;
+}
+
+const initialOrderListMyState: OrderListMyState = {
+  loading: false,
+  orders: [],
+};
+
+export const orderListMySlice = createSlice({
+  name: "orderListMy",
+  initialState: initialOrderListMyState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(listMyOrders.pending, (state) => {
+      state.loading = true;
+      state.error = undefined;
+    });
+    builder.addCase(listMyOrders.fulfilled, (state, { payload }) => {
+      state.loading = false;
+      state.orders = payload;
+    });
+    builder.addCase(listMyOrders.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+    });
+    builder.addCase(logout, (state) => {
+      state.error = undefined;
+      state.loading = false;
+      state.orders = [];
     });
   },
 });
