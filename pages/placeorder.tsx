@@ -5,7 +5,11 @@ import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import CheckoutSteps from "../components/CheckoutSteps";
 import Message from "../components/Message";
-import { CartItem, CartState } from "../frontend/reducers/cartReducers";
+import {
+  CartItem,
+  CartState,
+  cartSlice,
+} from "../frontend/reducers/cartReducers";
 import { RootState, useAppDispatch } from "../frontend/store";
 import { useMemo, useEffect } from "react";
 import { calculatePrices } from "../server/utils/prices";
@@ -14,6 +18,8 @@ import {
   OrderCreateState,
 } from "../frontend/reducers/orderReducers";
 import { OrderItem } from "../server/models/orderModel";
+import { userDetailsSlice } from "../frontend/reducers/userReducers";
+import { orderCreateSlice } from "../frontend/reducers/orderReducers";
 
 const PlaceOrderScreen: FunctionComponent = () => {
   const cart: CartState = useSelector((state: RootState) => state.cart);
@@ -39,8 +45,11 @@ const PlaceOrderScreen: FunctionComponent = () => {
   useEffect(() => {
     if (success) {
       router.push(`/orders/${order._id}`);
+      dispatch(userDetailsSlice.actions.reset());
+      dispatch(orderCreateSlice.actions.reset());
+      dispatch(cartSlice.actions.reset());
     }
-  }, [router, success, order]);
+  }, [dispatch, router, success, order]);
 
   const placeOrderHandler = useCallback(() => {
     console.log("place order");

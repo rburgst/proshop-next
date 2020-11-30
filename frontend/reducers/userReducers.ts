@@ -207,7 +207,13 @@ const initialUserDetailsState: UserDetailsState = {
 export const userDetailsSlice = createSlice({
   name: "userDetails",
   initialState: initialUserDetailsState,
-  reducers: {},
+  reducers: {
+    reset: (state, action: PayloadAction<void>) => {
+      state.error = undefined;
+      state.loading = false;
+      state.user = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(logout, (state) => {
       state.user = null;
