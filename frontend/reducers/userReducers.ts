@@ -222,6 +222,7 @@ export const userDetailsSlice = createSlice({
     builder.addCase(getUserDetails.pending, (state) => {
       state.loading = true;
       state.user = undefined;
+      state.error = undefined;
     });
     builder.addCase(getUserDetails.fulfilled, (state, { payload }) => {
       state.loading = false;

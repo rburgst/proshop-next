@@ -33,3 +33,16 @@ export const protect: MiddlewareFunction<NextApiRequestWithUser> = async (
   }
   next();
 };
+
+export const isAdmin: MiddlewareFunction<NextApiRequestWithUser> = async (
+  req,
+  res,
+  next
+) => {
+  if (req.user?.isAdmin) {
+    next();
+  } else {
+    res.statusCode = 401;
+    throw new Error("not authorized as an admin");
+  }
+};

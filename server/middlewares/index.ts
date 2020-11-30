@@ -1,4 +1,5 @@
 import { NextApiHandler, NextApiRequest, NextApiResponse } from "next";
+import { ErrorHandler } from "next-connect";
 
 export declare type MiddlewareFunction<
   REQ extends NextApiRequest = NextApiRequest,
@@ -12,6 +13,21 @@ const logRequestMiddleware: MiddlewareFunction = (
 ) => {
   console.log(req.url);
   next();
+};
+
+export const onError: ErrorHandler<NextApiRequest, NextApiResponse> = (
+  err: any,
+  req: NextApiRequest,
+  res: NextApiResponse,
+  next: NextApiHandler
+) => {
+  console.error("error caught in middleware", err);
+  const error = res.statusCode === 200 ? 500 : res.statusCode;
+  res.status(error);
+  res.json({
+    message: err.message,
+    stack: process.env.NODE_ENV === "production" ? undefined : err.stack,
+  });
 };
 
 async function applyMiddleware(
