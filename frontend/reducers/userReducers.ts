@@ -322,13 +322,7 @@ const initialUserListState: UserListState = {
 export const userListSlice = createSlice({
   name: "userList",
   initialState: initialUserListState,
-  reducers: {
-    reset: (state, action: PayloadAction<void>) => {
-      state.error = undefined;
-      state.loading = false;
-      state.user = null;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(logout, (state) => {
       state.users = [];

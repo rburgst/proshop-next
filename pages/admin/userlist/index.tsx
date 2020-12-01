@@ -11,6 +11,8 @@ import Message from "../../../components/Message";
 import { Button, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import { UserLoginState } from "../../../frontend/reducers/userReducers";
+import { useRouter } from "next/router";
 
 const ListUsersScreen: FunctionComponent = () => {
   const dispatch = useAppDispatch();
@@ -18,10 +20,22 @@ const ListUsersScreen: FunctionComponent = () => {
     (state: RootState) => state.userList as UserListState
   );
   const { loading, error, users } = userList;
+  const userLogin = useSelector(
+    (state: RootState) => state.userLogin as UserLoginState
+  );
+  const { userInfo } = userLogin;
+
+  const router = useRouter();
 
   useEffect(() => {
-    dispatch(listUsers());
-  }, [dispatch]);
+    if (userInfo) {
+      if (userInfo.isAdmin) {
+        dispatch(listUsers());
+      } else {
+        router.push("/login");
+      }
+    }
+  }, [dispatch, userInfo]);
 
   const deleteHandler = useCallback(
     (userId) => {
@@ -39,11 +53,13 @@ const ListUsersScreen: FunctionComponent = () => {
       ) : (
         <Table striped bordered hover responsive className={"table-sm"}>
           <thead>
-            <th>ID</th>
-            <th>NAME</th>
-            <th>EMAIL</th>
-            <th>ADMIN</th>
-            <th></th>
+            <tr>
+              <th>ID</th>
+              <th>NAME</th>
+              <th>EMAIL</th>
+              <th>ADMIN</th>
+              <th></th>
+            </tr>
           </thead>
           <tbody>
             {users.map((user) => (
