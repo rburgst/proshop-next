@@ -176,10 +176,10 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
                     )}
                   </td>
                   <td>
-                    <Link href={`/orders/${order._id}`}>
+                    <Link href={`/order/${order._id}`}>
                       <Button
                         as="a"
-                        href={`/orders/${order._id}`}
+                        href={`/order/${order._id}`}
                         variant="light"
                         className="btn-sm"
                       >

@@ -1,20 +1,20 @@
+import Link from "next/link";
 import React, { FunctionComponent } from "react";
 import { Card } from "react-bootstrap";
-import Link from "next/link";
+import { IProductWithId } from "../server/models/productModel";
 import Rating from "./Rating";
-import { IProduct } from "../pages/api/data/products";
 
 interface ProductProps {
-  product: IProduct;
+  product: IProductWithId;
 }
 const Product: FunctionComponent<ProductProps> = ({ product }) => {
   return (
     <Card className="my-3 p-3 rounded">
-      <Link href={`/products/${product._id}`}>
+      <Link href={`/product/${product._id}`}>
         <Card.Img src={product.image}></Card.Img>
       </Link>
       <Card.Body>
-        <Link href={`/products/${product._id}`}>
+        <Link href={`/product/${product._id}`}>
           <Card.Title as="div">
             <strong>{product.name}</strong>
           </Card.Title>

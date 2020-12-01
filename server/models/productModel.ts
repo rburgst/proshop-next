@@ -34,7 +34,9 @@ export interface IProduct {
   reviews: ID[] | IReviewDoc[];
   user: ID | IUserDoc;
 }
-
+export interface IProductWithId extends IProduct {
+  _id: string;
+}
 // see also https://hackernoon.com/how-to-link-mongoose-and-typescript-for-a-single-source-of-truth-94o3uqc
 export interface IProductDoc extends IProduct, mongoose.Document {}
 

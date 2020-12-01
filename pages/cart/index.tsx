@@ -12,7 +12,11 @@ import {
 import { useSelector } from "react-redux";
 import Message from "../../components/Message";
 import { RootState, useAppDispatch } from "../../frontend/store";
-import { addToCart, cartSlice } from "../../frontend/reducers/cartReducers";
+import {
+  addToCart,
+  cartSlice,
+  CartState,
+} from "../../frontend/reducers/cartReducers";
 import { Variant } from "react-bootstrap/esm/types";
 import { useRouter } from "next/router";
 
@@ -22,7 +26,8 @@ interface CartScreenRouteParams {
 interface CartScreenProps {}
 
 const CartScreen: FunctionComponent<CartScreenProps> = () => {
-  const cartItems = useSelector((state: RootState) => state.cart.cartItems);
+  const cart = useSelector((state: RootState) => state.cart as CartState);
+  const { cartItems } = cart;
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -58,7 +63,7 @@ const CartScreen: FunctionComponent<CartScreenProps> = () => {
                       <Image src={item.image} alt={item.name} fluid rounded />
                     </Col>
                     <Col md={3}>
-                      <Link href={`products/${item.product}`}>{item.name}</Link>
+                      <Link href={`product/${item.product}`}>{item.name}</Link>
                     </Col>
                     <Col md={2}>${item.price}</Col>
                     <Col md={2}>

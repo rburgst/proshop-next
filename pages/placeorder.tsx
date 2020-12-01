@@ -44,7 +44,7 @@ const PlaceOrderScreen: FunctionComponent = () => {
   // if we placed the order successfully, redirect to order screen
   useEffect(() => {
     if (success) {
-      router.push(`/orders/${order._id}`);
+      router.push(`/order/${order._id}`);
       dispatch(userDetailsSlice.actions.reset());
       dispatch(orderCreateSlice.actions.reset());
       dispatch(cartSlice.actions.reset());
