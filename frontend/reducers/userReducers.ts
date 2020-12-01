@@ -74,6 +74,29 @@ export const getUserDetails = createAsyncThunk<IUserWithId, string>(
   }
 );
 
+export const listUsers = createAsyncThunk<IUserWithId[]>(
+  "USER_LIST",
+  async (args, thunkAPI) => {
+    const state: RootState = thunkAPI.getState() as RootState;
+    if (!state.userLogin.userInfo) {
+      throw new Error("listUsers without logged in user");
+    }
+    const token = state.userLogin.userInfo!.token;
+
+    const response = await fetch(`/api/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText);
+    }
+    const users = data as IUserWithId[];
+    return users;
+  }
+);
+
 export const updateUserProfile = createAsyncThunk<
   IUserWithId,
   { name: string; email: string; password: string }
@@ -280,6 +303,49 @@ export const userUpdateProfileSlice = createSlice({
       state.loading = false;
       state.error = action.error.message;
       state.success = false;
+    });
+  },
+});
+
+export interface UserListState {
+  loading: boolean;
+  users: IUserWithId[];
+  error?: string;
+}
+
+const initialUserListState: UserListState = {
+  loading: false,
+  users: [],
+  error: undefined,
+};
+
+export const userListSlice = createSlice({
+  name: "userList",
+  initialState: initialUserListState,
+  reducers: {
+    reset: (state, action: PayloadAction<void>) => {
+      state.error = undefined;
+      state.loading = false;
+      state.user = null;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(logout, (state) => {
+      state.users = [];
+      state.error = undefined;
+    });
+    builder.addCase(listUsers.pending, (state) => {
+      state.loading = true;
+      state.users = [];
+      state.error = undefined;
+    });
+    builder.addCase(listUsers.fulfilled, (state, { payload }) => {
+      state.loading = false;
+      state.users = payload;
+    });
+    builder.addCase(listUsers.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
     });
   },
 });
