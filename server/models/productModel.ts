@@ -1,41 +1,43 @@
-import mongoose, { Model, Types } from "mongoose";
-import { IUserDoc } from "./userModel";
-export type ID = Types.ObjectId;
+import mongoose, { Model, Types } from 'mongoose'
+
+import { IUserDoc } from './userModel'
+
+export type ID = Types.ObjectId
 
 export interface ICreateProductInput {
-  name: IProduct["name"];
-  image: IProduct["image"];
-  description: IProduct["description"];
-  brand: IProduct["brand"];
-  category: IProduct["category"];
-  price: IProduct["price"];
-  countInStock: IProduct["countInStock"];
-  rating: IProduct["rating"];
-  numReviews: IProduct["numReviews"];
+  name: IProduct['name']
+  image: IProduct['image']
+  description: IProduct['description']
+  brand: IProduct['brand']
+  category: IProduct['category']
+  price: IProduct['price']
+  countInStock: IProduct['countInStock']
+  rating: IProduct['rating']
+  numReviews: IProduct['numReviews']
 }
 
 export interface IReview {
-  name: string;
-  rating: number;
-  comment: string;
+  name: string
+  rating: number
+  comment: string
 }
 export interface IReviewDoc extends IReview, mongoose.Document {}
 
 export interface IProduct {
-  name: string;
-  image: string;
-  description: string;
-  brand: string;
-  category: string;
-  price: number;
-  countInStock: number;
-  rating: number;
-  numReviews: number;
-  reviews: ID[] | IReviewDoc[];
-  user: ID | IUserDoc;
+  name: string
+  image: string
+  description: string
+  brand: string
+  category: string
+  price: number
+  countInStock: number
+  rating: number
+  numReviews: number
+  reviews: ID[] | IReviewDoc[]
+  user: ID | IUserDoc
 }
 export interface IProductWithId extends IProduct {
-  _id: string;
+  _id: string
 }
 // see also https://hackernoon.com/how-to-link-mongoose-and-typescript-for-a-single-source-of-truth-94o3uqc
 export interface IProductDoc extends IProduct, mongoose.Document {}
@@ -44,17 +46,17 @@ const ReviewSchemaFields: Record<keyof IReview, any> = {
   name: { type: String, required: true },
   rating: { type: Number, required: true },
   comment: { type: String, required: true },
-};
+}
 
 const reviewSchema = new mongoose.Schema(ReviewSchemaFields, {
   timestamps: true,
-});
+})
 
 const ProductSchemaFields: Record<keyof IProduct, any> = {
   user: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: "User",
+    ref: 'User',
   },
   name: {
     type: String,
@@ -97,16 +99,15 @@ const ProductSchemaFields: Record<keyof IProduct, any> = {
     required: true,
     default: 0,
   },
-};
+}
 
 const productSchema = new mongoose.Schema(ProductSchemaFields, {
   timestamps: true,
-});
+})
 
 //const Product = mongoose.model("Product", productSchema);
 
 // see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
 const Product: Model<IProductDoc> =
-  mongoose.models.Product ??
-  mongoose.model<IProductDoc>("Product", productSchema);
-export default Product;
+  mongoose.models.Product ?? mongoose.model<IProductDoc>('Product', productSchema)
+export default Product

@@ -1,33 +1,33 @@
-import mongoose, { Document, Model } from "mongoose";
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs'
+import mongoose, { Document, Model } from 'mongoose'
 
 export interface ICreateUserInput {
-  name: IUser["name"];
-  email: IUser["email"];
-  password: IUser["password"];
-  isAdmin?: IUser["isAdmin"];
+  name: IUser['name']
+  email: IUser['email']
+  password: IUser['password']
+  isAdmin?: IUser['isAdmin']
 }
 
 export interface IUserBase {
-  name: string;
-  email: string;
-  isAdmin: boolean;
+  name: string
+  email: string
+  isAdmin: boolean
 }
 
 export interface IUser extends IUserBase {
-  password: string;
+  password: string
 
-  matchPassword(givenPassword: string): Promise<boolean>;
+  matchPassword(givenPassword: string): Promise<boolean>
 }
 
 export interface IUserDoc extends Document, IUser {}
 
 // frontend types
 export interface IUserWithId extends IUserBase {
-  _id: string;
+  _id: string
 }
 export interface IUserWithToken extends IUserWithId {
-  token: string;
+  token: string
 }
 
 const userSchema = new mongoose.Schema(
@@ -54,26 +54,23 @@ const userSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-);
+)
 
-userSchema.methods.matchPassword = async function (
-  givenPassword: string
-): Promise<boolean> {
-  return await bcrypt.compare(givenPassword, this.password);
-};
+userSchema.methods.matchPassword = async function (givenPassword: string): Promise<boolean> {
+  return await bcrypt.compare(givenPassword, this.password)
+}
 
-userSchema.pre<IUserDoc>("save", async function (next) {
-  if (!this.isModified("password")) {
-    next();
+userSchema.pre<IUserDoc>('save', async function (next) {
+  if (!this.isModified('password')) {
+    next()
   } else {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
+    const salt = await bcrypt.genSalt(10)
+    this.password = await bcrypt.hash(this.password, salt)
+    next()
   }
-});
+})
 
 // const User = mongoose.model<IUser>("User", userSchema);
 // see https://github.com/vercel/next.js/issues/7328#issuecomment-519546743
-const User: Model<IUserDoc> =
-  mongoose.models.User ?? mongoose.model<IUserDoc>("User", userSchema);
-export default User;
+const User: Model<IUserDoc> = mongoose.models.User ?? mongoose.model<IUserDoc>('User', userSchema)
+export default User

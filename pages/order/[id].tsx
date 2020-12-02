@@ -1,111 +1,97 @@
-import React, {
-  useMemo,
-  useState,
-  useCallback,
-  FunctionComponent,
-  useEffect,
-} from "react";
-import { useSelector } from "react-redux";
+import fetch from 'isomorphic-unfetch'
+import { GetServerSideProps } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { env } from 'process'
+import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { Button, Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
+import { PayPalButton } from 'react-paypal-button-v2'
+import { useSelector } from 'react-redux'
+
+import Loader from '../../components/Loader'
+import Message from '../../components/Message'
 import {
-  OrderDetailsState,
   getOrderDetails,
-} from "../../frontend/reducers/orderReducers";
-import { RootState, useAppDispatch } from "../../frontend/store";
-import { useRouter } from "next/router";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
-import { Col, ListGroup, Row, Image, Card, Button } from "react-bootstrap";
-import { OrderItem } from "../../server/models/orderModel";
-import Link from "next/link";
-import { IUserWithId } from "../../frontend/reducers/userReducers";
-import fetch from "isomorphic-unfetch";
-import { GetServerSideProps } from "next";
-import { env } from "process";
-import {
+  OrderDetailsState,
+  orderPaySlice,
   OrderPayState,
   payOrder,
-  orderPaySlice,
-} from "../../frontend/reducers/orderReducers";
-import { PayPalButton } from "react-paypal-button-v2";
+} from '../../frontend/reducers/orderReducers'
+import { IUserWithId } from '../../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../../frontend/store'
+import { OrderItem } from '../../server/models/orderModel'
 
 interface OrderScreenProps {
-  clientId: string;
+  clientId: string
 }
 
 const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
-  const [sdkReady, setSdkReady] = useState(false);
-  const orderDetails = useSelector(
-    (state: RootState) => state.orderDetails as OrderDetailsState
-  );
-  const { order, loading, error } = orderDetails;
-  const orderPay = useSelector(
-    (state: RootState) => state.orderPay as OrderPayState
-  );
-  const { loading: loadingPay, success: successPay } = orderPay;
+  const [sdkReady, setSdkReady] = useState(false)
+  const orderDetails = useSelector((state: RootState) => state.orderDetails as OrderDetailsState)
+  const { order, loading, error } = orderDetails
+  const orderPay = useSelector((state: RootState) => state.orderPay as OrderPayState)
+  const { loading: loadingPay, success: successPay } = orderPay
 
-  const router = useRouter();
-  const orderId = router.query.id as string;
-  const dispatch = useAppDispatch();
+  const router = useRouter()
+  const orderId = router.query.id as string
+  const dispatch = useAppDispatch()
   useEffect(() => {
-    console.log("ClientId from props", clientId);
+    console.log('ClientId from props', clientId)
     console.log(
-      "useEffect orderId",
+      'useEffect orderId',
       orderId,
-      "loading",
+      'loading',
       loading,
-      "successPay",
+      'successPay',
       successPay,
-      "order",
+      'order',
       order
-    );
+    )
 
     const addPaypalScript = async () => {
-      const script = document.createElement("script");
-      script.type = "text/javascript";
-      script.async = true;
-      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
+      const script = document.createElement('script')
+      script.type = 'text/javascript'
+      script.async = true
+      script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`
       script.onload = () => {
-        setSdkReady(true);
-      };
-      document.body.appendChild(script);
-    };
+        setSdkReady(true)
+      }
+      document.body.appendChild(script)
+    }
 
     if (orderId && !loading) {
       if (!order || order._id !== orderId || successPay) {
-        console.log("dispatch reset");
-        dispatch(orderPaySlice.actions.reset());
-        console.log("dispatch loading", orderId);
-        dispatch(getOrderDetails(orderId));
+        console.log('dispatch reset')
+        dispatch(orderPaySlice.actions.reset())
+        console.log('dispatch loading', orderId)
+        dispatch(getOrderDetails(orderId))
       } else if (!order.isPaid) {
         // @ts-ignore: this is added by the paypal script
         if (!window.paypal) {
-          addPaypalScript();
+          addPaypalScript()
         } else {
-          setSdkReady(true);
+          setSdkReady(true)
         }
       }
     }
-  }, [orderId, dispatch, order, clientId, successPay]);
+  }, [orderId, dispatch, order, clientId, successPay])
   const itemsPrice = useMemo(() => {
     if (order?.orderItems) {
-      const itemsPrice = order.orderItems.reduce(
-        (acc, cur) => acc + cur.qty * cur.price,
-        0
-      );
-      return Number(itemsPrice).toFixed(2);
+      const itemsPrice = order.orderItems.reduce((acc, cur) => acc + cur.qty * cur.price, 0)
+      return Number(itemsPrice).toFixed(2)
     } else {
-      return 0;
+      return 0
     }
-  }, [order?.orderItems]);
-  const orderUser: IUserWithId = order?.user as IUserWithId;
+  }, [order?.orderItems])
+  const orderUser: IUserWithId = order?.user as IUserWithId
 
   const successPaymentHandler = useCallback(
     (paymentResult) => {
-      console.log("paymentResult", paymentResult);
-      dispatch(payOrder({ orderId, paymentResult }));
+      console.log('paymentResult', paymentResult)
+      dispatch(payOrder({ orderId, paymentResult }))
     },
     [dispatch, orderId]
-  );
+  )
 
   return loading ? (
     <Loader />
@@ -139,9 +125,7 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
-                <Message variant="success">
-                  Delivered on {order.deliveredAt}
-                </Message>
+                <Message variant="success">Delivered on {order.deliveredAt}</Message>
               ) : (
                 <Message variant="danger">Not Delivered</Message>
               )}
@@ -168,17 +152,10 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
                     <ListGroup.Item key={`cartitem-${index}`}>
                       <Row>
                         <Col md={1}>
-                          <Image
-                            src={item.image}
-                            fluid
-                            alt={item.name}
-                            rounded
-                          />
+                          <Image src={item.image} fluid alt={item.name} rounded />
                         </Col>
                         <Col>
-                          <Link href={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
+                          <Link href={`/product/${item.product}`}>{item.name}</Link>
                         </Col>
                         <Col md={4}>
                           {item.qty} x ${item.price} = ${item.qty * item.price}
@@ -239,10 +216,10 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
         </Col>
       </Row>
     </>
-  );
-};
+  )
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  return { props: { clientId: process.env.PAYPAL_CLIENT_ID } };
-};
-export default OrderScreen;
+  return { props: { clientId: process.env.PAYPAL_CLIENT_ID } }
+}
+export default OrderScreen

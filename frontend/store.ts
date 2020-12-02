@@ -9,10 +9,11 @@ import {
   getDefaultMiddleware,
   Reducer,
   ThunkAction,
-} from "@reduxjs/toolkit";
-import { ThunkMiddlewareFor } from "@reduxjs/toolkit/src/getDefaultMiddleware";
-import { useMemo } from "react";
-import { useDispatch } from "react-redux";
+} from '@reduxjs/toolkit'
+import { ThunkMiddlewareFor } from '@reduxjs/toolkit/src/getDefaultMiddleware'
+import { Context, createWrapper, HYDRATE, MakeStore } from 'next-redux-wrapper'
+import { useMemo } from 'react'
+import { useDispatch } from 'react-redux'
 import {
   FLUSH,
   PAUSE,
@@ -23,68 +24,54 @@ import {
   PURGE,
   REGISTER,
   REHYDRATE,
-} from "redux-persist";
-import storage from "redux-persist/lib/storage";
-import { cartSlice } from "./reducers/cartReducers";
-import {
-  productDetailsSlice,
-  productListSlice,
-} from "./reducers/productReducers";
-import {
-  userDetailsSlice,
-  userLoginSlice,
-  userRegisterSlice,
-  userUpdateProfileSlice,
-} from "./reducers/userReducers";
-import { MakeStore, createWrapper, Context, HYDRATE } from "next-redux-wrapper";
-import { orderListMySlice } from "./reducers/orderReducers";
-import { userListSlice, userDeleteSlice } from "./reducers/userReducers";
+} from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+
+import { cartSlice } from './reducers/cartReducers'
 import {
   orderCreateSlice,
   orderDetailsSlice,
+  orderListMySlice,
   orderPaySlice,
-} from "./reducers/orderReducers";
+} from './reducers/orderReducers'
+import { productDetailsSlice, productListSlice } from './reducers/productReducers'
+import {
+  userDeleteSlice,
+  userDetailsSlice,
+  userListSlice,
+  userLoginSlice,
+  userRegisterSlice,
+  userUpdateProfileSlice,
+} from './reducers/userReducers'
 
-export type StoreType = EnhancedStore<
-  RootState,
-  AnyAction,
-  [ThunkMiddlewareFor<RootState>]
->;
+export type StoreType = EnhancedStore<RootState, AnyAction, [ThunkMiddlewareFor<RootState>]>
 
-let store: StoreType;
+let store: StoreType
 
 function optionalPersistReducer<S, A extends Action = AnyAction>(
   isServer: boolean,
   reducer: Reducer<S, A>,
   persistConfig: PersistConfig<S>
 ): Reducer<S, A> {
-  return isServer ? reducer : persistReducer(persistConfig, reducer);
+  return isServer ? reducer : persistReducer(persistConfig, reducer)
 }
 
 function createReducer(isServer: boolean): Reducer {
   const cartPersistConfig = {
-    key: "cart",
+    key: 'cart',
     storage,
-    whitelist: ["cartItems", "shippingAddress", "paymentMethod"], // place to select which state you want to persist
-  };
+    whitelist: ['cartItems', 'shippingAddress', 'paymentMethod'], // place to select which state you want to persist
+  }
   const userLoginPersistConfig = {
-    key: "userLogin",
+    key: 'userLogin',
     storage,
-    whitelist: ["userInfo"], // place to select which state you want to persist
-  };
+    whitelist: ['userInfo'], // place to select which state you want to persist
+  }
   const rootReducer = combineReducers({
     productList: productListSlice.reducer,
     productDetails: productDetailsSlice.reducer,
-    cart: optionalPersistReducer(
-      isServer,
-      cartSlice.reducer,
-      cartPersistConfig
-    ),
-    userLogin: optionalPersistReducer(
-      isServer,
-      userLoginSlice.reducer,
-      userLoginPersistConfig
-    ),
+    cart: optionalPersistReducer(isServer, cartSlice.reducer, cartPersistConfig),
+    userLogin: optionalPersistReducer(isServer, userLoginSlice.reducer, userLoginPersistConfig),
     userRegister: userRegisterSlice.reducer,
     userDetails: userDetailsSlice.reducer,
     userList: userListSlice.reducer,
@@ -94,16 +81,16 @@ function createReducer(isServer: boolean): Reducer {
     orderDetails: orderDetailsSlice.reducer,
     orderPay: orderPaySlice.reducer,
     orderListMy: orderListMySlice.reducer,
-  });
-  return rootReducer;
+  })
+  return rootReducer
 }
 
-const dummyServerReducer = createReducer(true);
+const dummyServerReducer = createReducer(true)
 
-export type RootState = ReturnType<typeof dummyServerReducer>;
+export type RootState = ReturnType<typeof dummyServerReducer>
 
 const makeStore = () => {
-  const isServer = typeof window === "undefined";
+  const isServer = typeof window === 'undefined'
   const store = (configureStore<RootState>({
     reducer: createReducer(isServer),
     // @ts-ignore: cant be bothered right now
@@ -117,17 +104,17 @@ const makeStore = () => {
     }),
     devTools: true,
     //preloadedState: initialState,
-  }) as unknown) as StoreType;
+  }) as unknown) as StoreType
 
   if (!isServer) {
     // @ts-ignore: this will be ok
-    store.__persistor = persistStore(store); // This creates a persistor object & push that persisted object to .__persistor, so that we can avail the persistability feature
+    store.__persistor = persistStore(store) // This creates a persistor object & push that persisted object to .__persistor, so that we can avail the persistability feature
   }
-  return store;
-};
+  return store
+}
 
-export const wrapper = createWrapper<RootState>(makeStore, { debug: true });
+export const wrapper = createWrapper<RootState>(makeStore, { debug: true })
 
-export type AppDispatch = typeof store.dispatch;
-export const useAppDispatch = () => useDispatch<AppDispatch>();
-export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>;
+export type AppDispatch = typeof store.dispatch
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>

@@ -1,28 +1,28 @@
-import React, { SyntheticEvent, useCallback, useState } from "react";
-import { FunctionComponent } from "react";
-import { Button, Form } from "react-bootstrap";
-import FormContainer from "../components/FormContainer";
-import { useAppDispatch, RootState } from "../frontend/store";
-import { cartSlice } from "../frontend/reducers/cartReducers";
-import { useSelector } from "react-redux";
-import { useRouter } from "next/router";
-import CheckoutSteps from "../components/CheckoutSteps";
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, SyntheticEvent, useCallback, useState } from 'react'
+import { Button, Form } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import CheckoutSteps from '../components/CheckoutSteps'
+import FormContainer from '../components/FormContainer'
+import { cartSlice } from '../frontend/reducers/cartReducers'
+import { RootState, useAppDispatch } from '../frontend/store'
 
 const ShippingScreen: FunctionComponent = () => {
-  const cart = useSelector((state: RootState) => state.cart);
-  const { shippingAddress } = cart;
+  const cart = useSelector((state: RootState) => state.cart)
+  const { shippingAddress } = cart
 
-  const [address, setAddress] = useState(shippingAddress?.address);
-  const [city, setCity] = useState(shippingAddress?.city);
-  const [postalCode, setPostalCode] = useState(shippingAddress?.postalCode);
-  const [country, setCountry] = useState(shippingAddress?.country);
+  const [address, setAddress] = useState(shippingAddress?.address)
+  const [city, setCity] = useState(shippingAddress?.city)
+  const [postalCode, setPostalCode] = useState(shippingAddress?.postalCode)
+  const [country, setCountry] = useState(shippingAddress?.country)
 
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const submitHandler = useCallback(
     (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
+      e.preventDefault()
       dispatch(
         cartSlice.actions.saveShippingAddress({
           address,
@@ -30,12 +30,12 @@ const ShippingScreen: FunctionComponent = () => {
           postalCode,
           country,
         })
-      );
-      router.push("/payment");
+      )
+      router.push('/payment')
     },
 
     [dispatch, router, address, city, postalCode, country]
-  );
+  )
   return (
     <FormContainer>
       <CheckoutSteps step1 step2 />
@@ -82,7 +82,7 @@ const ShippingScreen: FunctionComponent = () => {
         </Button>
       </Form>
     </FormContainer>
-  );
-};
+  )
+}
 
-export default ShippingScreen;
+export default ShippingScreen

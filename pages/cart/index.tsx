@@ -1,46 +1,35 @@
-import Link from "next/link";
-import React, { FunctionComponent, useCallback } from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Image,
-  ListGroup,
-  Row,
-} from "react-bootstrap";
-import { useSelector } from "react-redux";
-import Message from "../../components/Message";
-import { RootState, useAppDispatch } from "../../frontend/store";
-import {
-  addToCart,
-  cartSlice,
-  CartState,
-} from "../../frontend/reducers/cartReducers";
-import { Variant } from "react-bootstrap/esm/types";
-import { useRouter } from "next/router";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, useCallback } from 'react'
+import { Button, Card, Col, Form, Image, ListGroup, Row } from 'react-bootstrap'
+import { Variant } from 'react-bootstrap/esm/types'
+import { useSelector } from 'react-redux'
+
+import Message from '../../components/Message'
+import { addToCart, cartSlice, CartState } from '../../frontend/reducers/cartReducers'
+import { RootState, useAppDispatch } from '../../frontend/store'
 
 interface CartScreenRouteParams {
-  id: string;
+  id: string
 }
 interface CartScreenProps {}
 
 const CartScreen: FunctionComponent<CartScreenProps> = () => {
-  const cart = useSelector((state: RootState) => state.cart as CartState);
-  const { cartItems } = cart;
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  const cart = useSelector((state: RootState) => state.cart as CartState)
+  const { cartItems } = cart
+  const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const onRemoveFromCartHandler = useCallback(
     (id) => {
-      dispatch(cartSlice.actions.removeItem(id));
+      dispatch(cartSlice.actions.removeItem(id))
     },
     [dispatch]
-  );
+  )
   const checkoutHandler = useCallback(() => {
-    console.log("checkout");
-    router.push("/login?redirect=shipping");
-  }, [router]);
+    console.log('checkout')
+    router.push('/login?redirect=shipping')
+  }, [router])
 
   return (
     <>
@@ -87,10 +76,7 @@ const CartScreen: FunctionComponent<CartScreenProps> = () => {
                       </Form.Control>
                     </Col>
                     <Col md={2}>
-                      <Button
-                        variant="light"
-                        onClick={() => onRemoveFromCartHandler(item.product)}
-                      >
+                      <Button variant="light" onClick={() => onRemoveFromCartHandler(item.product)}>
                         <i className="fas fa-trash"></i>
                       </Button>
                     </Col>
@@ -104,14 +90,8 @@ const CartScreen: FunctionComponent<CartScreenProps> = () => {
           <Card>
             <ListGroup variant="flush">
               <ListGroup.Item>
-                <h2>
-                  Subtotal ({cartItems.reduce((acc, cur) => acc + cur.qty, 0)})
-                  items
-                </h2>
-                $
-                {cartItems
-                  .reduce((acc, cur) => acc + cur.price * cur.qty, 0)
-                  .toFixed(2)}
+                <h2>Subtotal ({cartItems.reduce((acc, cur) => acc + cur.qty, 0)}) items</h2>$
+                {cartItems.reduce((acc, cur) => acc + cur.price * cur.qty, 0).toFixed(2)}
               </ListGroup.Item>
               <ListGroup.Item>
                 <Button
@@ -129,7 +109,7 @@ const CartScreen: FunctionComponent<CartScreenProps> = () => {
       </Row>
       <ul></ul>
     </>
-  );
-};
+  )
+}
 
-export default CartScreen;
+export default CartScreen

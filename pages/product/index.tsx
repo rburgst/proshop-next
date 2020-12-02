@@ -1,16 +1,16 @@
-import Head from "next/head";
-import styles from "../styles/Home.module.css";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps } from 'next'
+import Head from 'next/head'
+import { FunctionComponent, useEffect, useState } from 'react'
+import { Col, Row } from 'react-bootstrap'
 
-import { Col, Row } from "react-bootstrap";
-import Product from "../../components/Product";
-import { FunctionComponent, useEffect, useState } from "react";
-import { IProduct } from "../api/data/products";
-import connectDB from "../../server/config/db";
-import ProductModel from "../../server/models/productModel";
+import Product from '../../components/Product'
+import connectDB from '../../server/config/db'
+import ProductModel from '../../server/models/productModel'
+import { IProduct } from '../api/data/products'
+import styles from '../styles/Home.module.css'
 
 interface ProductsProps {
-  products: IProduct[];
+  products: IProduct[]
 }
 
 const Home: FunctionComponent<ProductsProps> = ({ products }) => {
@@ -25,26 +25,26 @@ const Home: FunctionComponent<ProductsProps> = ({ products }) => {
         ))}
       </Row>
     </>
-  );
-};
+  )
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const mongoose = await connectDB();
-  console.log("get server props");
-  const products = await ProductModel.find({}).lean();
+  const mongoose = await connectDB()
+  console.log('get server props')
+  const products = await ProductModel.find({}).lean()
   const leanProducts = products.map((product) => ({
     ...product,
     _id: product._id.toString(),
     user: product.user.toString(),
     createdAt: product.createdAt.toString(),
     updatedAt: product.updatedAt.toString(),
-  }));
+  }))
 
   return {
     props: {
       products: leanProducts,
     }, // will be passed to the page component as props
-  };
-};
+  }
+}
 
-export default Home;
+export default Home

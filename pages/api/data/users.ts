@@ -1,23 +1,24 @@
-import { IUser, ICreateUserInput } from "../../../server/models/userModel";
-import bcrypt from "bcryptjs";
+import bcrypt from 'bcryptjs'
+
+import { ICreateUserInput, IUser } from '../../../server/models/userModel'
 
 const users: ICreateUserInput[] = [
   {
-    name: "Admin User",
-    email: "admin@example.com",
-    password: "123456",
+    name: 'Admin User',
+    email: 'admin@example.com',
+    password: '123456',
     isAdmin: true,
   },
   {
-    name: "John Doe",
-    email: "john@example.com",
-    password: "123456",
+    name: 'John Doe',
+    email: 'john@example.com',
+    password: '123456',
   },
   {
-    name: "Jane Doe",
-    email: "jane@example.com",
-    password: "123456",
+    name: 'Jane Doe',
+    email: 'jane@example.com',
+    password: '123456',
   },
-];
+]
 
-export default users;
+export default users

@@ -1,20 +1,14 @@
-import Link from "next/link";
-import React from "react";
-import { FunctionComponent } from "react";
-import { Nav } from "react-bootstrap";
+import Link from 'next/link'
+import React, { FunctionComponent } from 'react'
+import { Nav } from 'react-bootstrap'
 
 interface CheckoutStepsProps {
-  step1?: boolean;
-  step2?: boolean;
-  step3?: boolean;
-  step4?: boolean;
+  step1?: boolean
+  step2?: boolean
+  step3?: boolean
+  step4?: boolean
 }
-const CheckoutSteps: FunctionComponent<CheckoutStepsProps> = ({
-  step1,
-  step2,
-  step3,
-  step4,
-}) => {
+const CheckoutSteps: FunctionComponent<CheckoutStepsProps> = ({ step1, step2, step3, step4 }) => {
   return (
     <Nav className="justify-content-center mb-4">
       <Nav.Item>
@@ -62,7 +56,7 @@ const CheckoutSteps: FunctionComponent<CheckoutStepsProps> = ({
         )}
       </Nav.Item>
     </Nav>
-  );
-};
+  )
+}
 
-export default CheckoutSteps;
+export default CheckoutSteps

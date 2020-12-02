@@ -1,58 +1,50 @@
-import React, { useCallback, useEffect } from "react";
-import { FunctionComponent } from "react";
-import { RootState, useAppDispatch } from "../../../frontend/store";
-import { useSelector } from "react-redux";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, useCallback, useEffect } from 'react'
+import { Button, Table } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import Loader from '../../../components/Loader'
+import Message from '../../../components/Message'
 import {
+  deleteUser,
   listUsers,
-  UserListState,
-} from "../../../frontend/reducers/userReducers";
-import Loader from "../../../components/Loader";
-import Message from "../../../components/Message";
-import { Button, Table } from "react-bootstrap";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
-import {
-  UserLoginState,
   UserDeleteState,
-} from "../../../frontend/reducers/userReducers";
-import { useRouter } from "next/router";
-import { deleteUser } from "../../../frontend/reducers/userReducers";
+  UserListState,
+  UserLoginState,
+} from '../../../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../../../frontend/store'
 
 const ListUsersScreen: FunctionComponent = () => {
-  const dispatch = useAppDispatch();
-  const userList = useSelector(
-    (state: RootState) => state.userList as UserListState
-  );
-  const { loading, error, users } = userList;
-  const userLogin = useSelector(
-    (state: RootState) => state.userLogin as UserLoginState
-  );
-  const { userInfo } = userLogin;
-  const userDelete = useSelector(
-    (state: RootState) => state.userDelete as UserDeleteState
-  );
-  const { success: successDelete } = userDelete;
+  const dispatch = useAppDispatch()
+  const userList = useSelector((state: RootState) => state.userList as UserListState)
+  const { loading, error, users } = userList
+  const userLogin = useSelector((state: RootState) => state.userLogin as UserLoginState)
+  const { userInfo } = userLogin
+  const userDelete = useSelector((state: RootState) => state.userDelete as UserDeleteState)
+  const { success: successDelete } = userDelete
 
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     if (userInfo) {
       if (userInfo.isAdmin) {
-        dispatch(listUsers());
+        dispatch(listUsers())
       } else {
-        router.push("/login");
+        router.push('/login')
       }
     }
-  }, [router, dispatch, userInfo, successDelete]);
+  }, [router, dispatch, userInfo, successDelete])
 
   const deleteHandler = useCallback(
     (userId) => {
-      if (window.confirm("Are you sure")) {
-        dispatch(deleteUser(userId));
+      if (window.confirm('Are you sure')) {
+        dispatch(deleteUser(userId))
       }
     },
     [dispatch]
-  );
+  )
   return (
     <>
       <h1>List Users</h1>
@@ -61,7 +53,7 @@ const ListUsersScreen: FunctionComponent = () => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <Table striped bordered hover responsive className={"table-sm"}>
+        <Table striped bordered hover responsive className={'table-sm'}>
           <thead>
             <tr>
               <th>ID</th>
@@ -111,7 +103,7 @@ const ListUsersScreen: FunctionComponent = () => {
         </Table>
       )}
     </>
-  );
-};
+  )
+}
 
-export default ListUsersScreen;
+export default ListUsersScreen

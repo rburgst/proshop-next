@@ -1,51 +1,36 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import {
-  Button,
-  Card,
-  Col,
-  Form,
-  Image,
-  ListGroup,
-  Row,
-} from "react-bootstrap";
-import Rating from "../../components/Rating";
-import products from "../api/data/products";
-import { IProduct } from "../api/data/products";
-import { useAppDispatch, RootState } from "../../frontend/store";
-import { fetchProduct } from "../../frontend/reducers/productReducers";
-import { useSelector } from "react-redux";
-import Loader from "../../components/Loader";
-import Message from "../../components/Message";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { Button, Card, Col, Form, Image, ListGroup, Row } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import Loader from '../../components/Loader'
+import Message from '../../components/Message'
+import Rating from '../../components/Rating'
+import { fetchProduct } from '../../frontend/reducers/productReducers'
+import { RootState, useAppDispatch } from '../../frontend/store'
+import products, { IProduct } from '../api/data/products'
 
 interface ProductScreenProps {}
 
 const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
-  const router = useRouter();
-  const { id } = router.query;
-  const dispatch = useAppDispatch();
-  const productDetails = useSelector(
-    (state: RootState) => state.productDetails
-  );
-  const { loading, product, error } = productDetails;
+  const router = useRouter()
+  const { id } = router.query
+  const dispatch = useAppDispatch()
+  const productDetails = useSelector((state: RootState) => state.productDetails)
+  const { loading, product, error } = productDetails
 
-  const [qty, setQty] = useState(1);
+  const [qty, setQty] = useState(1)
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchProduct(id as string));
+      dispatch(fetchProduct(id as string))
     }
-  }, [id, dispatch]);
+  }, [id, dispatch])
 
   const addToCartHandler = useCallback(() => {
-    router.push(`/cart/${id}?qty=${qty}`);
-  }, [router, id, qty]);
+    router.push(`/cart/${id}?qty=${qty}`)
+  }, [router, id, qty])
 
   return (
     <>
@@ -67,15 +52,10 @@ const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
                 <h3>{product.name}</h3>
               </ListGroup.Item>
               <ListGroup.Item>
-                <Rating
-                  value={product.rating}
-                  text={`${product.numReviews} reviews`}
-                />
+                <Rating value={product.rating} text={`${product.numReviews} reviews`} />
               </ListGroup.Item>
               <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
-              <ListGroup.Item>
-                Description: ${product.description}
-              </ListGroup.Item>
+              <ListGroup.Item>Description: ${product.description}</ListGroup.Item>
             </ListGroup>
           </Col>
           <Col md={3}>
@@ -90,9 +70,7 @@ const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
                 <ListGroup.Item>
                   <Row>
                     <Col>Status:</Col>
-                    <Col>
-                      {product.countInStock > 0 ? "In Stock" : "Out Of Stock"}
-                    </Col>
+                    <Col>{product.countInStock > 0 ? 'In Stock' : 'Out Of Stock'}</Col>
                   </Row>
                 </ListGroup.Item>
 
@@ -120,7 +98,7 @@ const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
                 <ListGroup.Item>
                   <Button
                     type="button"
-                    className={"btn-block"}
+                    className={'btn-block'}
                     disabled={product.countInStock === 0}
                     onClick={addToCartHandler}
                   >
@@ -133,7 +111,7 @@ const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
         </Row>
       )}
     </>
-  );
-};
+  )
+}
 
-export default ProductScreen;
+export default ProductScreen

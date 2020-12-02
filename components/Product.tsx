@@ -1,11 +1,12 @@
-import Link from "next/link";
-import React, { FunctionComponent } from "react";
-import { Card } from "react-bootstrap";
-import { IProductWithId } from "../server/models/productModel";
-import Rating from "./Rating";
+import Link from 'next/link'
+import React, { FunctionComponent } from 'react'
+import { Card } from 'react-bootstrap'
+
+import { IProductWithId } from '../server/models/productModel'
+import Rating from './Rating'
 
 interface ProductProps {
-  product: IProductWithId;
+  product: IProductWithId
 }
 const Product: FunctionComponent<ProductProps> = ({ product }) => {
   return (
@@ -20,15 +21,12 @@ const Product: FunctionComponent<ProductProps> = ({ product }) => {
           </Card.Title>
         </Link>
         <Card.Text as="div">
-          <Rating
-            value={product.rating}
-            text={`${product.numReviews} reviews`}
-          />
+          <Rating value={product.rating} text={`${product.numReviews} reviews`} />
         </Card.Text>
         <Card.Text as="h3">${product.price}</Card.Text>
       </Card.Body>
     </Card>
-  );
-};
+  )
+}
 
-export default Product;
+export default Product

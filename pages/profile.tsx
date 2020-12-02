@@ -1,93 +1,72 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, {
-  FunctionComponent,
-  SyntheticEvent,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { Button, Col, Form, Row, Table } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import FormContainer from "../components/FormContainer";
-import Loader from "../components/Loader";
-import Message from "../components/Message";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import { Button, Col, Form, Row, Table } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import Loader from '../components/Loader'
+import Message from '../components/Message'
+import { listMyOrders, OrderListMyState } from '../frontend/reducers/orderReducers'
 import {
-  registerUser,
   getUserDetails,
-} from "../frontend/reducers/userReducers";
-import { RootState, useAppDispatch } from "../frontend/store";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  OrderListMyState,
-  listMyOrders,
-} from "../frontend/reducers/orderReducers";
-import {
   updateUserProfile,
   userUpdateProfileSlice,
-} from "../frontend/reducers/userReducers";
-import { time } from "console";
+} from '../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../frontend/store'
 
 export interface ProfileScreenProps {
-  redirect?: string;
+  redirect?: string
 }
 const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [message, setMessage] = useState('')
 
-  const router = useRouter();
-  const dispatch = useAppDispatch();
+  const router = useRouter()
+  const dispatch = useAppDispatch()
 
-  const userDetails = useSelector((state: RootState) => state.userDetails);
-  const { loading, user, error } = userDetails;
-  const userLogin = useSelector((state: RootState) => state.userLogin);
-  const { userInfo } = userLogin;
-  const userUpdateProfile = useSelector(
-    (state: RootState) => state.userUpdateProfile
-  );
-  const { success } = userUpdateProfile;
-  const orderListMy = useSelector(
-    (state: RootState) => state.orderListMy as OrderListMyState
-  );
-  const {
-    loading: loadingMyOrders,
-    error: errorMyOrders,
-    orders,
-  } = orderListMy;
+  const userDetails = useSelector((state: RootState) => state.userDetails)
+  const { loading, user, error } = userDetails
+  const userLogin = useSelector((state: RootState) => state.userLogin)
+  const { userInfo } = userLogin
+  const userUpdateProfile = useSelector((state: RootState) => state.userUpdateProfile)
+  const { success } = userUpdateProfile
+  const orderListMy = useSelector((state: RootState) => state.orderListMy as OrderListMyState)
+  const { loading: loadingMyOrders, error: errorMyOrders, orders } = orderListMy
 
   useEffect(() => {
     // redirect to login if not logged in
     if (!userInfo) {
-      router.push("/login");
+      router.push('/login')
     }
     if (!user?.name || success) {
       // dont have user details yet or we have updated the user profile
-      dispatch(userUpdateProfileSlice.actions.reset());
-      dispatch(getUserDetails("profile"));
-      dispatch(listMyOrders());
+      dispatch(userUpdateProfileSlice.actions.reset())
+      dispatch(getUserDetails('profile'))
+      dispatch(listMyOrders())
     } else {
-      setName(user.name);
-      setEmail(user.email);
+      setName(user.name)
+      setEmail(user.email)
     }
-  }, [userInfo, success, user, router, dispatch]);
+  }, [userInfo, success, user, router, dispatch])
 
   const submitHandler = useCallback(
     (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      console.log("confirm", confirmPassword, "password", password);
+      e.preventDefault()
+      console.log('confirm', confirmPassword, 'password', password)
       if (confirmPassword !== password) {
-        setMessage("Passwords do not match");
+        setMessage('Passwords do not match')
       } else {
-        setMessage("");
+        setMessage('')
 
-        dispatch(updateUserProfile({ name, email, password }));
+        dispatch(updateUserProfile({ name, email, password }))
       }
     },
     [dispatch, name, email, password, confirmPassword]
-  );
+  )
 
   return (
     <Row>
@@ -165,14 +144,14 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
                     {order.isPaid ? (
                       order.paidAt.toString().substring(0, 10)
                     ) : (
-                      <FontAwesomeIcon icon={"times"} color="red" />
+                      <FontAwesomeIcon icon={'times'} color="red" />
                     )}
                   </td>
                   <td>
                     {order.isDelivered ? (
                       order.isDelivered.toString().substring(0, 10)
                     ) : (
-                      <FontAwesomeIcon icon={"times"} color="red" />
+                      <FontAwesomeIcon icon={'times'} color="red" />
                     )}
                   </td>
                   <td>
@@ -194,7 +173,7 @@ const ProfileScreen: FunctionComponent<ProfileScreenProps> = () => {
         )}
       </Col>
     </Row>
-  );
-};
+  )
+}
 
-export default ProfileScreen;
+export default ProfileScreen

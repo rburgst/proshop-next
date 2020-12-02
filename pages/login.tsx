@@ -1,41 +1,41 @@
-import Link from "next/link";
-import React, { SyntheticEvent, useCallback } from "react";
-import { useState, FunctionComponent, useEffect } from "react";
-import { Button, Col, Form, Row } from "react-bootstrap";
-import FormContainer from "../components/FormContainer";
-import { useRouter } from "next/router";
-import { useAppDispatch, RootState } from "../frontend/store";
-import { useSelector } from "react-redux";
-import { loginUser } from "../frontend/reducers/userReducers";
-import Message from "../components/Message";
-import Loader from "../components/Loader";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import { Button, Col, Form, Row } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import FormContainer from '../components/FormContainer'
+import Loader from '../components/Loader'
+import Message from '../components/Message'
+import { loginUser } from '../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../frontend/store'
 
 export interface LoginScreenProps {
-  redirect?: string;
+  redirect?: string
 }
 const LoginScreen: FunctionComponent<LoginScreenProps> = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-  const redirect = (router.query.redirect as string) ?? "/";
-  const dispatch = useAppDispatch();
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const router = useRouter()
+  const redirect = (router.query.redirect as string) ?? '/'
+  const dispatch = useAppDispatch()
 
-  const userLogin = useSelector((state: RootState) => state.userLogin);
-  const { loading, userInfo, error } = userLogin;
+  const userLogin = useSelector((state: RootState) => state.userLogin)
+  const { loading, userInfo, error } = userLogin
 
   useEffect(() => {
     if (userInfo) {
-      router.push(redirect);
+      router.push(redirect)
     }
-  }, [userInfo, router, redirect]);
+  }, [userInfo, router, redirect])
 
   const submitHandler = useCallback(
     (e: SyntheticEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      dispatch(loginUser({ email, password }));
+      e.preventDefault()
+      dispatch(loginUser({ email, password }))
     },
     [dispatch, email, password]
-  );
+  )
 
   return (
     <FormContainer>
@@ -68,18 +68,14 @@ const LoginScreen: FunctionComponent<LoginScreenProps> = () => {
           </Button>
           <Row className="py-3">
             <Col>
-              New Customer?{" "}
-              <Link
-                href={redirect ? `/register?redirect=${redirect}` : `/register`}
-              >
-                Register
-              </Link>
+              New Customer?{' '}
+              <Link href={redirect ? `/register?redirect=${redirect}` : `/register`}>Register</Link>
             </Col>
           </Row>
         </Form>
       )}
     </FormContainer>
-  );
-};
+  )
+}
 
-export default LoginScreen;
+export default LoginScreen

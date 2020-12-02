@@ -1,58 +1,45 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import React, { FunctionComponent, SyntheticEvent, useCallback } from "react";
-import { Button, Card, Col, Image, ListGroup, Row } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import CheckoutSteps from "../components/CheckoutSteps";
-import Message from "../components/Message";
-import {
-  CartItem,
-  CartState,
-  cartSlice,
-} from "../frontend/reducers/cartReducers";
-import { RootState, useAppDispatch } from "../frontend/store";
-import { useMemo, useEffect } from "react";
-import { calculatePrices } from "../server/utils/prices";
-import {
-  createOrder,
-  OrderCreateState,
-} from "../frontend/reducers/orderReducers";
-import { OrderItem } from "../server/models/orderModel";
-import { userDetailsSlice } from "../frontend/reducers/userReducers";
-import { orderCreateSlice } from "../frontend/reducers/orderReducers";
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import React, { FunctionComponent, SyntheticEvent, useCallback, useEffect, useMemo } from 'react'
+import { Button, Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import CheckoutSteps from '../components/CheckoutSteps'
+import Message from '../components/Message'
+import { CartItem, cartSlice, CartState } from '../frontend/reducers/cartReducers'
+import { createOrder, orderCreateSlice, OrderCreateState } from '../frontend/reducers/orderReducers'
+import { userDetailsSlice } from '../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../frontend/store'
+import { OrderItem } from '../server/models/orderModel'
+import { calculatePrices } from '../server/utils/prices'
 
 const PlaceOrderScreen: FunctionComponent = () => {
-  const cart: CartState = useSelector((state: RootState) => state.cart);
-  const { cartItems } = cart;
+  const cart: CartState = useSelector((state: RootState) => state.cart)
+  const { cartItems } = cart
 
   const cartPrices = useMemo(() => {
-    const itemsPrice = cartItems.reduce(
-      (acc, cur) => acc + cur.qty * cur.price,
-      0
-    );
-    return calculatePrices(itemsPrice);
-  }, [cartItems]);
+    const itemsPrice = cartItems.reduce((acc, cur) => acc + cur.qty * cur.price, 0)
+    return calculatePrices(itemsPrice)
+  }, [cartItems])
 
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  const dispatch = useAppDispatch()
+  const router = useRouter()
 
-  const orderCreate = useSelector(
-    (state: RootState) => state.orderCreate as OrderCreateState
-  );
-  const { order, error, success } = orderCreate;
+  const orderCreate = useSelector((state: RootState) => state.orderCreate as OrderCreateState)
+  const { order, error, success } = orderCreate
 
   // if we placed the order successfully, redirect to order screen
   useEffect(() => {
     if (success) {
-      router.push(`/order/${order._id}`);
-      dispatch(userDetailsSlice.actions.reset());
-      dispatch(orderCreateSlice.actions.reset());
-      dispatch(cartSlice.actions.reset());
+      router.push(`/order/${order._id}`)
+      dispatch(userDetailsSlice.actions.reset())
+      dispatch(orderCreateSlice.actions.reset())
+      dispatch(cartSlice.actions.reset())
     }
-  }, [dispatch, router, success, order]);
+  }, [dispatch, router, success, order])
 
   const placeOrderHandler = useCallback(() => {
-    console.log("place order");
+    console.log('place order')
 
     dispatch(
       createOrder({
@@ -60,8 +47,8 @@ const PlaceOrderScreen: FunctionComponent = () => {
         shippingAddress: cart.shippingAddress,
         paymentMethod: cart.paymentMethod,
       })
-    );
-  }, [dispatch, router, cart]);
+    )
+  }, [dispatch, router, cart])
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
@@ -97,17 +84,10 @@ const PlaceOrderScreen: FunctionComponent = () => {
                     <ListGroup.Item key={`cartitem-${index}`}>
                       <Row>
                         <Col md={1}>
-                          <Image
-                            src={item.image}
-                            fluid
-                            alt={item.name}
-                            rounded
-                          />
+                          <Image src={item.image} fluid alt={item.name} rounded />
                         </Col>
                         <Col>
-                          <Link href={`/product/${item.product}`}>
-                            {item.name}
-                          </Link>
+                          <Link href={`/product/${item.product}`}>{item.name}</Link>
                         </Col>
                         <Col md={4}>
                           {item.qty} x ${item.price} = ${item.qty * item.price}
@@ -167,7 +147,7 @@ const PlaceOrderScreen: FunctionComponent = () => {
         </Col>
       </Row>
     </>
-  );
-};
+  )
+}
 
-export default PlaceOrderScreen;
+export default PlaceOrderScreen

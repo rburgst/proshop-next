@@ -1,17 +1,18 @@
-import Link from "next/link";
-import React, { useCallback } from "react";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { useSelector } from "react-redux";
-import { logout } from "../frontend/reducers/userReducers";
-import { RootState, useAppDispatch } from "../frontend/store";
+import Link from 'next/link'
+import React, { useCallback } from 'react'
+import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
+
+import { logout } from '../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../frontend/store'
 
 const Header = () => {
-  const userLogin = useSelector((state: RootState) => state.userLogin);
-  const { userInfo } = userLogin;
-  const dispatch = useAppDispatch();
+  const userLogin = useSelector((state: RootState) => state.userLogin)
+  const { userInfo } = userLogin
+  const dispatch = useAppDispatch()
   const logoutHandler = useCallback(() => {
-    dispatch(logout());
-  }, [dispatch]);
+    dispatch(logout())
+  }, [dispatch])
   return (
     <header>
       <Navbar bg="dark" variant="dark" collapseOnSelect expand="lg">
@@ -39,9 +40,7 @@ const Header = () => {
                       Profile
                     </NavDropdown.Item>
                   </Link>
-                  <NavDropdown.Item onClick={logoutHandler}>
-                    Logout
-                  </NavDropdown.Item>
+                  <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                 </NavDropdown>
               ) : (
                 <Link href="/login">
@@ -51,7 +50,7 @@ const Header = () => {
                 </Link>
               )}
               {userInfo?.isAdmin && (
-                <NavDropdown title={"Admin"} id="adminmenu">
+                <NavDropdown title={'Admin'} id="adminmenu">
                   <Link href="/admin/userlist">
                     <NavDropdown.Item as="a" href="/admin/userlist">
                       Users
@@ -74,7 +73,7 @@ const Header = () => {
         </Container>
       </Navbar>
     </header>
-  );
-};
+  )
+}
 
-export default Header;
+export default Header

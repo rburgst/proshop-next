@@ -1,43 +1,44 @@
-import mongoose, { Model, MongooseDocument } from "mongoose";
-import { ShippingAddress } from "./models";
-import { ID } from "./productModel";
-import { IUserDoc } from "./userModel";
+import mongoose, { Model } from 'mongoose'
+
+import { ShippingAddress } from './models'
+import { ID } from './productModel'
+import { IUserDoc } from './userModel'
 
 export interface PaymentResult {
-  id: string;
-  status: string;
-  update_time: string;
-  email_address: string;
+  id: string
+  status: string
+  update_time: string
+  email_address: string
 }
 export interface OrderItem {
-  name: string;
-  qty: number;
-  image: string;
-  price: number;
-  product: ID;
+  name: string
+  qty: number
+  image: string
+  price: number
+  product: ID
 }
 export interface IOrder {
-  user: ID | IUserDoc;
-  orderItems: OrderItem[];
+  user: ID | IUserDoc
+  orderItems: OrderItem[]
 
-  shippingAddress: ShippingAddress;
-  paymentMethod: string;
-  paymentResult: PaymentResult;
-  taxPrice: number;
-  shippingPrice: number;
-  totalPrice: number;
-  isPaid: boolean;
-  paidAt: Date;
-  isDelivered: boolean;
-  deliveredAt: Date;
-  createdAt?: string;
-  updatedAt?: string;
+  shippingAddress: ShippingAddress
+  paymentMethod: string
+  paymentResult: PaymentResult
+  taxPrice: number
+  shippingPrice: number
+  totalPrice: number
+  isPaid: boolean
+  paidAt: Date
+  isDelivered: boolean
+  deliveredAt: Date
+  createdAt?: string
+  updatedAt?: string
 }
 export interface IOrderInput {
-  orderItems: OrderItem[];
+  orderItems: OrderItem[]
 
-  shippingAddress: ShippingAddress;
-  paymentMethod: string;
+  shippingAddress: ShippingAddress
+  paymentMethod: string
 }
 
 export interface IOrderDoc extends IOrder, mongoose.Document {}
@@ -47,7 +48,7 @@ const orderSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "User",
+      ref: 'User',
     },
     orderItems: [
       {
@@ -70,7 +71,7 @@ const orderSchema = new mongoose.Schema(
         product: {
           type: mongoose.Schema.Types.ObjectId,
           required: true,
-          ref: "Product",
+          ref: 'Product',
         },
       },
     ],
@@ -125,8 +126,7 @@ const orderSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-);
+)
 
-const Order: Model<IOrderDoc> =
-  mongoose.models.Order ?? mongoose.model("Order", orderSchema);
-export default Order;
+const Order: Model<IOrderDoc> = mongoose.models.Order ?? mongoose.model('Order', orderSchema)
+export default Order
