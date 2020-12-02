@@ -1,5 +1,0 @@
-dist/*
-# dont lint config files
-commitlint.config.js
-jest.config.js
-.eslintrc.js
