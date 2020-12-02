@@ -2,19 +2,13 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FunctionComponent, useCallback } from 'react'
 import { Button, Card, Col, Form, Image, ListGroup, Row } from 'react-bootstrap'
-import { Variant } from 'react-bootstrap/esm/types'
 import { useSelector } from 'react-redux'
 
 import Message from '../../components/Message'
 import { addToCart, cartSlice, CartState } from '../../frontend/reducers/cartReducers'
 import { RootState, useAppDispatch } from '../../frontend/store'
 
-interface CartScreenRouteParams {
-  id: string
-}
-interface CartScreenProps {}
-
-const CartScreen: FunctionComponent<CartScreenProps> = () => {
+const CartScreen: FunctionComponent = () => {
   const cart = useSelector((state: RootState) => state.cart as CartState)
   const { cartItems } = cart
   const dispatch = useAppDispatch()

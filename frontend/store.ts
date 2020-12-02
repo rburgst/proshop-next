@@ -3,16 +3,13 @@ import {
   AnyAction,
   combineReducers,
   configureStore,
-  createStore,
-  DeepPartial,
   EnhancedStore,
   getDefaultMiddleware,
   Reducer,
   ThunkAction,
 } from '@reduxjs/toolkit'
 import { ThunkMiddlewareFor } from '@reduxjs/toolkit/src/getDefaultMiddleware'
-import { Context, createWrapper, HYDRATE, MakeStore } from 'next-redux-wrapper'
-import { useMemo } from 'react'
+import { createWrapper } from 'next-redux-wrapper'
 import { useDispatch } from 'react-redux'
 import {
   FLUSH,
@@ -25,6 +22,7 @@ import {
   REGISTER,
   REHYDRATE,
 } from 'redux-persist'
+import { PersistPartial } from 'redux-persist/es/persistReducer'
 import storage from 'redux-persist/lib/storage'
 
 import { cartSlice } from './reducers/cartReducers'
@@ -52,7 +50,7 @@ function optionalPersistReducer<S, A extends Action = AnyAction>(
   isServer: boolean,
   reducer: Reducer<S, A>,
   persistConfig: PersistConfig<S>
-): Reducer<S, A> {
+): Reducer<S, A> | Reducer<S & PersistPartial, A> {
   return isServer ? reducer : persistReducer(persistConfig, reducer)
 }
 
@@ -89,7 +87,7 @@ const dummyServerReducer = createReducer(true)
 
 export type RootState = ReturnType<typeof dummyServerReducer>
 
-const makeStore = () => {
+const makeStore = (): StoreType => {
   const isServer = typeof window === 'undefined'
   const store = (configureStore<RootState>({
     reducer: createReducer(isServer),
@@ -116,5 +114,7 @@ const makeStore = () => {
 export const wrapper = createWrapper<RootState>(makeStore, { debug: true })
 
 export type AppDispatch = typeof store.dispatch
+
+// eslint-disable-next-line
 export const useAppDispatch = () => useDispatch<AppDispatch>()
 export type AppThunk = ThunkAction<void, RootState, unknown, Action<string>>

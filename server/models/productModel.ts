@@ -42,6 +42,7 @@ export interface IProductWithId extends IProduct {
 // see also https://hackernoon.com/how-to-link-mongoose-and-typescript-for-a-single-source-of-truth-94o3uqc
 export interface IProductDoc extends IProduct, mongoose.Document {}
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ReviewSchemaFields: Record<keyof IReview, any> = {
   name: { type: String, required: true },
   rating: { type: Number, required: true },
@@ -52,6 +53,7 @@ const reviewSchema = new mongoose.Schema(ReviewSchemaFields, {
   timestamps: true,
 })
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const ProductSchemaFields: Record<keyof IProduct, any> = {
   user: {
     type: mongoose.Schema.Types.ObjectId,

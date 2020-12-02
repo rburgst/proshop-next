@@ -1,19 +1,16 @@
-import fetch from 'isomorphic-unfetch'
-import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { FunctionComponent, useEffect } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
 import Loader from '../components/Loader'
 import Message from '../components/Message'
 import Product from '../components/Product'
-import { fetchProducts } from '../frontend/reducers/productReducers'
+import { fetchProducts, ProductListState } from '../frontend/reducers/productReducers'
 import { RootState, useAppDispatch } from '../frontend/store'
-import styles from '../styles/Home.module.css'
 
-const Home = () => {
+const Home: FunctionComponent = () => {
   const dispatch = useAppDispatch()
-  const productList = useSelector((state: RootState) => state.productList)
+  const productList = useSelector((state: RootState) => state.productList as ProductListState)
   const { loading, products, error } = productList
 
   useEffect(() => {

@@ -1,24 +1,19 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from 'next'
+import nc from 'next-connect'
 
 import connectDB from '../../../server/config/db'
-import withMiddleware from '../../../server/middlewares/index'
+import { onError } from '../../../server/middlewares/index'
 import Product from '../../../server/models/productModel'
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+const getAllProducts = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   console.error('get products')
-  if (req.method === 'GET') {
-    const mongoose = await connectDB()
-    const products = await Product.find({})
-    res.statusCode = 200
+  await connectDB()
+  const products = await Product.find({})
+  res.statusCode = 200
 
-    res.json(products)
-  } else {
-    // Handle any other HTTP method
-    res.statusCode = 400
-    res.json({ error: 'wrong http method' })
-  }
+  res.json(products)
 }
 
-export default withMiddleware(handler)
+export default nc({ onError: onError }).get(getAllProducts)

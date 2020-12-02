@@ -1,6 +1,4 @@
-import bcrypt from 'bcryptjs'
-
-import { ICreateUserInput, IUser } from '../../../server/models/userModel'
+import { ICreateUserInput } from '../../../server/models/userModel'
 
 const users: ICreateUserInput[] = [
   {

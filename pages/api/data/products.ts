@@ -1,6 +1,6 @@
-import { IProduct } from '../../../server/models/productModel'
+import { ICreateProductInput } from '../../../server/models/productModel'
 
-const products: IProduct[] = [
+const products: ICreateProductInput[] = [
   {
     name: 'Airpods Wireless Bluetooth Headphones',
     image: '/images/airpods.jpg',

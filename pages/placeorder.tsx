@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FunctionComponent, SyntheticEvent, useCallback, useEffect, useMemo } from 'react'
+import React, { FunctionComponent, useCallback, useEffect, useMemo } from 'react'
 import { Button, Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
@@ -30,7 +30,7 @@ const PlaceOrderScreen: FunctionComponent = () => {
 
   // if we placed the order successfully, redirect to order screen
   useEffect(() => {
-    if (success) {
+    if (order && success) {
       router.push(`/order/${order._id}`)
       dispatch(userDetailsSlice.actions.reset())
       dispatch(orderCreateSlice.actions.reset())
@@ -41,6 +41,9 @@ const PlaceOrderScreen: FunctionComponent = () => {
   const placeOrderHandler = useCallback(() => {
     console.log('place order')
 
+    if (!cart.shippingAddress || !cart.paymentMethod) {
+      throw new Error('both shipping address and payment methods are required')
+    }
     dispatch(
       createOrder({
         orderItems: (cart.cartItems as unknown) as OrderItem[],
@@ -48,7 +51,7 @@ const PlaceOrderScreen: FunctionComponent = () => {
         paymentMethod: cart.paymentMethod,
       })
     )
-  }, [dispatch, router, cart])
+  }, [dispatch, cart])
   return (
     <>
       <CheckoutSteps step1 step2 step3 step4 />
@@ -60,11 +63,11 @@ const PlaceOrderScreen: FunctionComponent = () => {
               <p>
                 <strong>Address:</strong>
                 <br />
-                {cart.shippingAddress.address}
+                {cart.shippingAddress?.address}
                 <br />
-                {cart.shippingAddress.postalCode} {cart.shippingAddress.city}
+                {cart.shippingAddress?.postalCode} {cart.shippingAddress?.city}
                 <br />
-                {cart.shippingAddress.country}
+                {cart.shippingAddress?.country}
               </p>
             </ListGroup.Item>
             <ListGroup.Item>

@@ -1,16 +1,13 @@
 import { GetServerSideProps } from 'next'
-import Head from 'next/head'
-import { FunctionComponent, useEffect, useState } from 'react'
+import { FunctionComponent } from 'react'
 import { Col, Row } from 'react-bootstrap'
 
 import Product from '../../components/Product'
 import connectDB from '../../server/config/db'
-import ProductModel from '../../server/models/productModel'
-import { IProduct } from '../api/data/products'
-import styles from '../styles/Home.module.css'
+import ProductModel, { IProductWithId } from '../../server/models/productModel'
 
 interface ProductsProps {
-  products: IProduct[]
+  products: IProductWithId[]
 }
 
 const Home: FunctionComponent<ProductsProps> = ({ products }) => {
@@ -28,15 +25,17 @@ const Home: FunctionComponent<ProductsProps> = ({ products }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const mongoose = await connectDB()
+export const getServerSideProps: GetServerSideProps = async () => {
+  await connectDB()
   console.log('get server props')
   const products = await ProductModel.find({}).lean()
   const leanProducts = products.map((product) => ({
     ...product,
     _id: product._id.toString(),
     user: product.user.toString(),
+    // @ts-ignore: timestamps are not represented in the schema
     createdAt: product.createdAt.toString(),
+    // @ts-ignore: timestamps are not represented in the schema
     updatedAt: product.updatedAt.toString(),
   }))
 

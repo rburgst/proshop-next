@@ -6,7 +6,7 @@ import User, { IUserDoc } from '../models/userModel'
 import { MiddlewareFunction } from '.'
 
 export interface NextApiRequestWithUser extends NextApiRequest {
-  user: IUserDoc | null
+  user: IUserDoc
 }
 
 export const protect: MiddlewareFunction<NextApiRequestWithUser> = async (req, res, next) => {
@@ -19,7 +19,11 @@ export const protect: MiddlewareFunction<NextApiRequestWithUser> = async (req, r
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const decoded: any = jwt.verify(token, secret)
       console.log('token found ', decoded)
-      req.user = await User.findById(decoded.id).select('-password')
+      const user = await User.findById(decoded.id).select('-password')
+      if (!user) {
+        throw new Error('user not found')
+      }
+      req.user = user
     } catch (error) {
       res.statusCode = 401
       throw new Error('not authorized, invalid token')

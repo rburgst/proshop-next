@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { FunctionComponent } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 
-const Footer = () => {
+const Footer: FunctionComponent = () => {
   return (
     <footer>
       <Row>

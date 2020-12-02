@@ -5,9 +5,7 @@ import React, { FunctionComponent, useEffect } from 'react'
 import { addToCart } from '../../frontend/reducers/cartReducers'
 import { useAppDispatch } from '../../frontend/store'
 
-interface CartScreenProps {}
-
-const CartScreen: FunctionComponent<CartScreenProps> = () => {
+const CartScreen: FunctionComponent = () => {
   const router = useRouter()
   const { id, qty } = router.query
 
@@ -18,7 +16,7 @@ const CartScreen: FunctionComponent<CartScreenProps> = () => {
       dispatch(addToCart({ productId: id as string, qty: actualQty }))
     }
     router.push('/cart')
-  }, [id, qty, dispatch])
+  }, [id, qty, dispatch, router])
 
   return (
     <>

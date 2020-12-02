@@ -1,13 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import fetch from 'isomorphic-unfetch'
 
-import { IProduct } from '../../pages/api/data/products'
-import { AppDispatch } from '../store'
+import { IProductWithId } from '../../server/models/productModel'
 
 export type ProductListState = {
   loading: boolean
-  products: IProduct[]
-  error?: any
+  products: IProductWithId[]
+  error?: string
 }
 
 const initialProductListState: ProductListState = {
@@ -17,24 +16,24 @@ const initialProductListState: ProductListState = {
 
 // thunks
 
-export const fetchProducts = createAsyncThunk<IProduct[]>('PRODUCT_LIST', async (thunkAPI) => {
+export const fetchProducts = createAsyncThunk<IProductWithId[]>('PRODUCT_LIST', async () => {
   const response = await fetch('/api/products')
   const data = await response.json()
   if (!response.ok) {
     throw new Error(data?.message ?? response.statusText)
   }
-  return data as IProduct[]
+  return data as IProductWithId[]
 })
 
-export const fetchProduct = createAsyncThunk<IProduct, string>(
+export const fetchProduct = createAsyncThunk<IProductWithId, string>(
   'PRODUCT_DETAILS',
-  async (productId, thunkAPI) => {
+  async (productId) => {
     const response = await fetch(`/api/products/${productId}`)
     const data = await response.json()
     if (!response.ok) {
       throw new Error(data?.message ?? response.statusText)
     }
-    return data as IProduct
+    return data as IProductWithId
   }
 )
 
@@ -62,13 +61,12 @@ export const productListSlice = createSlice({
 
 export type ProductDetailsState = {
   loading: boolean
-  product: IProduct
-  error?: any
+  product?: IProductWithId
+  error?: string
 }
 
 const initialProductDetailsState: ProductDetailsState = {
   loading: false,
-  product: { reviews: [] } as IProduct,
 }
 
 export const productDetailsSlice = createSlice({

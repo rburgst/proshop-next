@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 import { ShippingAddress } from '../../server/models/models'
-import { IProduct, IProductDoc } from '../../server/models/productModel'
+import { IProductDoc } from '../../server/models/productModel'
 import { RootState } from '../store'
 
 export interface CartItem {
@@ -48,7 +48,7 @@ export const cartSlice = createSlice({
     savePaymentMethod: (state: CartState, action: PayloadAction<string>) => {
       state.paymentMethod = action.payload
     },
-    reset: (state: CartState, _: PayloadAction<void>) => {
+    reset: (state: CartState) => {
       state.cartItems = []
     },
   },

@@ -1,16 +1,11 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from 'next'
+import nc from 'next-connect'
 
-import withMiddleware from '../../../server/middlewares'
+import { onError } from '../../../server/middlewares'
 
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'GET') {
-    res.json(process.env.PAYPAL_CLIENT_ID)
-  } else {
-    // Handle any other HTTP method
-    res.statusCode = 400
-    res.json({ error: 'wrong http method' })
-  }
+const getPaypalId = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
+  res.json(process.env.PAYPAL_CLIENT_ID)
 }
-export default withMiddleware(handler)
+export default nc({ onError: onError }).get(getPaypalId)

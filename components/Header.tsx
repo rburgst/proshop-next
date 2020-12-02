@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import React, { useCallback } from 'react'
+import React, { FunctionComponent, useCallback } from 'react'
 import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
 import { logout } from '../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../frontend/store'
 
-const Header = () => {
+const Header: FunctionComponent = () => {
   const userLogin = useSelector((state: RootState) => state.userLogin)
   const { userInfo } = userLogin
   const dispatch = useAppDispatch()

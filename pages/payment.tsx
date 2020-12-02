@@ -47,7 +47,7 @@ const PaymentScreen: FunctionComponent = () => {
               name="paymentMethod"
               value="PayPal"
               checked
-              onChange={(e) => setPaymentMethod(e.target.value)}
+              onChange={(e) => setPaymentMethod(e.currentTarget.value)}
             ></Form.Check>
             <Form.Check
               type="radio"

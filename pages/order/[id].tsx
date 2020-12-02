@@ -1,10 +1,8 @@
-import fetch from 'isomorphic-unfetch'
 import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { env } from 'process'
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import { Button, Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
+import { Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
 import { PayPalButton } from 'react-paypal-button-v2'
 import { useSelector } from 'react-redux'
 
@@ -17,9 +15,9 @@ import {
   OrderPayState,
   payOrder,
 } from '../../frontend/reducers/orderReducers'
-import { IUserWithId } from '../../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../../frontend/store'
 import { OrderItem } from '../../server/models/orderModel'
+import { IUserWithId } from '../../server/models/userModel'
 
 interface OrderScreenProps {
   clientId: string
@@ -48,7 +46,7 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
       order
     )
 
-    const addPaypalScript = async () => {
+    const addPaypalScript = (): void => {
       const script = document.createElement('script')
       script.type = 'text/javascript'
       script.async = true
@@ -74,7 +72,7 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
         }
       }
     }
-  }, [orderId, dispatch, order, clientId, successPay])
+  }, [orderId, dispatch, order, clientId, successPay, loading])
   const itemsPrice = useMemo(() => {
     if (order?.orderItems) {
       const itemsPrice = order.orderItems.reduce((acc, cur) => acc + cur.qty * cur.price, 0)
@@ -219,7 +217,7 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   return { props: { clientId: process.env.PAYPAL_CLIENT_ID } }
 }
 export default OrderScreen

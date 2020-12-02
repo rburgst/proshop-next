@@ -9,11 +9,8 @@ import Message from '../../components/Message'
 import Rating from '../../components/Rating'
 import { fetchProduct } from '../../frontend/reducers/productReducers'
 import { RootState, useAppDispatch } from '../../frontend/store'
-import products, { IProduct } from '../api/data/products'
 
-interface ProductScreenProps {}
-
-const ProductScreen: FunctionComponent<ProductScreenProps> = () => {
+const ProductScreen: FunctionComponent = () => {
   const router = useRouter()
   const { id } = router.query
   const dispatch = useAppDispatch()
