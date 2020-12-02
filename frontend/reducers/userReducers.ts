@@ -124,12 +124,25 @@ export const updateUserProfile = createAsyncThunk<
   return updatedUser;
 });
 
-export interface IUserWithId extends IUser {
-  _id: string;
-}
-export interface IUserWithToken extends IUserWithId {
-  token: string;
-}
+export const deleteUser = createAsyncThunk<boolean, string>(
+  "USER_DELETE",
+  async (userId, thunkAPI) => {
+    const state: RootState = thunkAPI.getState() as RootState;
+    const token = state.userLogin.userInfo.token;
+
+    const response = await fetch(`/api/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      method: "DELETE",
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText);
+    }
+    return true;
+  }
+);
 
 // slice
 export interface UserLoginState {
@@ -340,6 +353,39 @@ export const userListSlice = createSlice({
     builder.addCase(listUsers.rejected, (state, action) => {
       state.loading = false;
       state.error = action.error.message;
+    });
+  },
+});
+
+export interface UserDeleteState {
+  loading: boolean;
+  error?: string;
+  success: boolean;
+}
+
+const initialUserDeleteState: UserDeleteState = {
+  loading: false,
+  error: undefined,
+  success: false,
+};
+
+export const userDeleteSlice = createSlice({
+  name: "userDelete",
+  initialState: initialUserDeleteState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(deleteUser.pending, (state) => {
+      state.loading = true;
+      state.success = false;
+    });
+    builder.addCase(deleteUser.fulfilled, (state) => {
+      state.loading = false;
+      state.success = true;
+    });
+    builder.addCase(deleteUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.error.message;
+      state.success = false;
     });
   },
 });

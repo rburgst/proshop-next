@@ -38,7 +38,7 @@ import {
 } from "./reducers/userReducers";
 import { MakeStore, createWrapper, Context, HYDRATE } from "next-redux-wrapper";
 import { orderListMySlice } from "./reducers/orderReducers";
-import { userListSlice } from "./reducers/userReducers";
+import { userListSlice, userDeleteSlice } from "./reducers/userReducers";
 import {
   orderCreateSlice,
   orderDetailsSlice,
@@ -88,6 +88,7 @@ function createReducer(isServer: boolean): Reducer {
     userRegister: userRegisterSlice.reducer,
     userDetails: userDetailsSlice.reducer,
     userList: userListSlice.reducer,
+    userDelete: userDeleteSlice.reducer,
     userUpdateProfile: userUpdateProfileSlice.reducer,
     orderCreate: orderCreateSlice.reducer,
     orderDetails: orderDetailsSlice.reducer,
