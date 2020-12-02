@@ -10,7 +10,7 @@ module.exports = {
   overrides: [
     // This configuration will apply only to TypeScript files
     {
-      plugins: ['@typescript-eslint', 'prettier'],
+      plugins: ['@typescript-eslint', 'prettier',"simple-import-sort", "import"],
       files: ['**/*.ts', '**/*.tsx'],
       parser: '@typescript-eslint/parser',
       settings: { react: { version: 'detect' } },
@@ -31,6 +31,8 @@ module.exports = {
         'plugin:prettier/recommended', // Prettier recommended rules
       ],
       rules: {
+        '@typescript-eslint/ban-ts-comment': ['error', { 'ts-ignore': 'allow-with-description' }],
+
         // We will use TypeScript's types for component props instead
         'react/prop-types': 'off',
 
@@ -52,18 +54,12 @@ module.exports = {
           },
         ],
         'prettier/prettier': ['error', {}, { usePrettierrc: true }], // Includes .prettierrc.js rules
-        // 'simple-import-sort/imports': 'error',
-        // 'simple-import-sort/exports': 'error',
-        'sort-imports': 'off',
-        // 'import/order': 'off',
-        'import/namespace': ['error', { allowComputed: true }],
-        'import/order': [
-          'error',
-          {
-            groups: [['index', 'sibling', 'parent', 'internal', 'external', 'builtin']],
-            'newlines-between': 'never',
-          },
-        ],
+        "simple-import-sort/imports": "error",
+        "simple-import-sort/exports": "error",
+        "sort-imports": "off",
+        "import/first": "error",
+        "import/newline-after-import": "error",
+        "import/no-duplicates": "error"
       },
     },
   ],
