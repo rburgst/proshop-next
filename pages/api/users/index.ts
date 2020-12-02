@@ -1,18 +1,22 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
 import { NextApiRequest, NextApiResponse } from "next";
-import connectDB from "../../../server/config/db";
-import User, { IUser } from "../../../server/models/userModel";
-import withMiddleware from "../../../server/middlewares/index";
-import { IUserDoc, ICreateUserInput } from "../../../server/models/userModel";
-import { generateToken } from "../../../server/utils/generateToken";
-import { isAdmin, protect } from "../../../server/middlewares/authMiddleware";
 import nc from "next-connect";
+import connectDB from "../../../server/config/db";
+import { isAdmin, protect } from "../../../server/middlewares/authMiddleware";
 import { onError } from "../../../server/middlewares/index";
+import User, {
+  IUserWithId,
+  IUserWithToken,
+} from "../../../server/models/userModel";
+import { generateToken } from "../../../server/utils/generateToken";
 
-async function registerUser(req: NextApiRequest, res: NextApiResponse<any>) {
+async function registerUser(
+  req: NextApiRequest,
+  res: NextApiResponse<IUserWithToken>
+): Promise<void> {
   const { name, email, password } = req.body;
-  const mongoose = await connectDB();
+  await connectDB();
   const userExists = await User.findOne({ email });
 
   if (userExists) {
@@ -36,9 +40,12 @@ async function registerUser(req: NextApiRequest, res: NextApiResponse<any>) {
   }
 }
 
-async function getAllUsers(req: NextApiRequest, res: NextApiResponse<any>) {
-  const mongoose = await connectDB();
-  const users = await User.find();
+async function getAllUsers(
+  req: NextApiRequest,
+  res: NextApiResponse<IUserWithId[]>
+): Promise<void> {
+  await connectDB();
+  const users = await User.find().select("-password");
   res.json(users);
 }
 

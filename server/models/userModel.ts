@@ -7,16 +7,28 @@ export interface ICreateUserInput {
   password: IUser["password"];
   isAdmin?: IUser["isAdmin"];
 }
-export interface IUser {
+
+export interface IUserBase {
   name: string;
   email: string;
-  password: string;
   isAdmin: boolean;
+}
+
+export interface IUser extends IUserBase {
+  password: string;
 
   matchPassword(givenPassword: string): Promise<boolean>;
 }
 
 export interface IUserDoc extends Document, IUser {}
+
+// frontend types
+export interface IUserWithId extends IUserBase {
+  _id: string;
+}
+export interface IUserWithToken extends IUserWithId {
+  token: string;
+}
 
 const userSchema = new mongoose.Schema(
   {

@@ -5,7 +5,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { IUser } from "../../server/models/userModel";
+import { IUserWithId, IUserWithToken } from "../../server/models/userModel";
 import { RootState } from "../store";
 
 // extra actions
@@ -16,7 +16,7 @@ export const logout = createAction<void>("LOGOUT");
 export const loginUser = createAsyncThunk<
   IUserWithToken,
   { email: string; password: string }
->("USER_LOGIN", async (args, thunkAPI) => {
+>("USER_LOGIN", async (args) => {
   const { email, password } = args;
   const response = await fetch("/api/users/login", {
     body: JSON.stringify({ email, password }),
@@ -31,7 +31,7 @@ export const loginUser = createAsyncThunk<
 });
 
 export const registerUser = createAsyncThunk<
-  IUserWithId,
+  IUserWithToken,
   { name: string; email: string; password: string }
 >("USER_REGISTER", async (args, thunkAPI) => {
   const { name, email, password } = args;
@@ -58,7 +58,7 @@ export const getUserDetails = createAsyncThunk<IUserWithId, string>(
     if (!state.userLogin.userInfo) {
       throw new Error("getUserDetails without logged in user");
     }
-    const token = state.userLogin.userInfo!.token;
+    const token = state.userLogin.userInfo.token;
 
     const response = await fetch(`/api/users/${finalId}`, {
       headers: {
@@ -81,7 +81,7 @@ export const listUsers = createAsyncThunk<IUserWithId[]>(
     if (!state.userLogin.userInfo) {
       throw new Error("listUsers without logged in user");
     }
-    const token = state.userLogin.userInfo!.token;
+    const token = state.userLogin.userInfo.token;
 
     const response = await fetch(`/api/users`, {
       headers: {
@@ -103,7 +103,7 @@ export const updateUserProfile = createAsyncThunk<
 >("USER_PROFILE_UPDATE", async (user, thunkAPI) => {
   const { name, email, password } = user;
   const state: RootState = thunkAPI.getState() as RootState;
-  const token = state.userLogin.userInfo!.token;
+  const token = state.userLogin.userInfo.token;
 
   const response = await fetch(`/api/users/profile`, {
     body: JSON.stringify({ email, password, name }),
@@ -181,7 +181,7 @@ export const userLoginSlice = createSlice({
 
 export interface UserRegisterState {
   loading: boolean;
-  userInfo?: IUser;
+  userInfo?: IUserWithToken;
   error?: string;
 }
 
@@ -197,7 +197,7 @@ export const userRegisterSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(logout, (state) => {
-      state.userInfo = null;
+      state.userInfo = undefined;
       state.error = undefined;
     });
     builder.addCase(registerUser.pending, (state) => {
@@ -217,7 +217,7 @@ export const userRegisterSlice = createSlice({
 
 export interface UserDetailsState {
   loading: boolean;
-  user?: IUser;
+  user?: IUserWithId;
   error?: string;
 }
 
@@ -231,15 +231,15 @@ export const userDetailsSlice = createSlice({
   name: "userDetails",
   initialState: initialUserDetailsState,
   reducers: {
-    reset: (state, action: PayloadAction<void>) => {
+    reset: (state) => {
       state.error = undefined;
       state.loading = false;
-      state.user = null;
+      state.user = undefined;
     },
   },
   extraReducers: (builder) => {
     builder.addCase(logout, (state) => {
-      state.user = null;
+      state.user = undefined;
       state.error = undefined;
     });
     builder.addCase(getUserDetails.pending, (state) => {
@@ -260,7 +260,7 @@ export const userDetailsSlice = createSlice({
 
 export interface UserUpdateProfileState {
   loading: boolean;
-  userInfo?: IUser;
+  userInfo?: IUserWithId;
   error?: string;
   success: boolean;
 }
@@ -276,7 +276,7 @@ export const userUpdateProfileSlice = createSlice({
   name: "userUpdateProfile",
   initialState: initialUserUpdateProfileState,
   reducers: {
-    reset: (state, action: PayloadAction<void>) => {
+    reset: (state) => {
       state.userInfo = undefined;
       state.error = undefined;
       state.success = false;
@@ -285,7 +285,7 @@ export const userUpdateProfileSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(logout, (state) => {
-      state.userInfo = null;
+      state.userInfo = undefined;
       state.error = undefined;
       state.success = false;
     });

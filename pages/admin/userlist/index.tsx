@@ -11,8 +11,12 @@ import Message from "../../../components/Message";
 import { Button, Table } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
-import { UserLoginState } from "../../../frontend/reducers/userReducers";
+import {
+  UserLoginState,
+  UserDeleteState,
+} from "../../../frontend/reducers/userReducers";
 import { useRouter } from "next/router";
+import { deleteUser } from "../../../frontend/reducers/userReducers";
 
 const ListUsersScreen: FunctionComponent = () => {
   const dispatch = useAppDispatch();
@@ -24,6 +28,10 @@ const ListUsersScreen: FunctionComponent = () => {
     (state: RootState) => state.userLogin as UserLoginState
   );
   const { userInfo } = userLogin;
+  const userDelete = useSelector(
+    (state: RootState) => state.userDelete as UserDeleteState
+  );
+  const { success: successDelete } = userDelete;
 
   const router = useRouter();
 
@@ -35,13 +43,15 @@ const ListUsersScreen: FunctionComponent = () => {
         router.push("/login");
       }
     }
-  }, [dispatch, userInfo]);
+  }, [router, dispatch, userInfo, successDelete]);
 
   const deleteHandler = useCallback(
     (userId) => {
-      console.log("deleting user", userId);
+      if (window.confirm("Are you sure")) {
+        dispatch(deleteUser(userId));
+      }
     },
-    [users, dispatch]
+    [dispatch]
   );
   return (
     <>
@@ -77,11 +87,11 @@ const ListUsersScreen: FunctionComponent = () => {
                   )}
                 </td>
                 <td>
-                  <Link href={`/users/${user._id}`}>
+                  <Link href={`/admin/user/${user._id}`}>
                     <Button
                       variant="light"
                       as="a"
-                      href={`/users/${user._id}`}
+                      href={`/admin/user/${user._id}`}
                       className="btn-sm"
                     >
                       <FontAwesomeIcon icon="edit" />
