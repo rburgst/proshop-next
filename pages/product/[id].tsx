@@ -34,7 +34,7 @@ const ProductScreen: FunctionComponent = () => {
       <Link href="/">
         <a className="btn btn-light my-3">Go Back</a>
       </Link>
-      {loading ? (
+      {loading || !product ? (
         <Loader />
       ) : error ? (
         <Message variant="danger">{error}</Message>

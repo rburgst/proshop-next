@@ -79,11 +79,11 @@ const ListUsersScreen: FunctionComponent = () => {
                   )}
                 </td>
                 <td>
-                  <Link href={`/admin/user/${user._id}`}>
+                  <Link href={`/admin/user/${user._id}/edit`}>
                     <Button
                       variant="light"
                       as="a"
-                      href={`/admin/user/${user._id}`}
+                      href={`/admin/user/${user._id}/edit`}
                       className="btn-sm"
                     >
                       <FontAwesomeIcon icon="edit" />
