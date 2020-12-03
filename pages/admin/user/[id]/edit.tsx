@@ -7,7 +7,13 @@ import { useSelector } from 'react-redux'
 import FormContainer from '../../../../components/FormContainer'
 import Loader from '../../../../components/Loader'
 import Message from '../../../../components/Message'
-import { getUserDetails, UserDetailsState } from '../../../../frontend/reducers/userReducers'
+import {
+  getUserDetails,
+  updateUser,
+  UserDetailsState,
+  userUpdateSlice,
+  UserUpdateState,
+} from '../../../../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../../../../frontend/store'
 
 const UserEditScreen: FunctionComponent = () => {
@@ -20,23 +26,39 @@ const UserEditScreen: FunctionComponent = () => {
 
   const userDetails = useSelector((state: RootState) => state.userDetails as UserDetailsState)
   const { loading, user, error } = userDetails
+  const userUpdate = useSelector((state: RootState) => state.userUpdate as UserUpdateState)
+  const { loading: loadingUpdate, success: successUpdate, error: errorUpdate } = userUpdate
   const userId = router.query.id as string
+
+  // when we first enter the screen make sure that everything is reset
+  useEffect(() => {
+    dispatch(userUpdateSlice.actions.reset())
+  }, [dispatch])
 
   useEffect(() => {
     if (userId) {
-      if (!user?.name || user?._id !== userId) {
-        dispatch(getUserDetails(userId))
-      } else if (user) {
-        setName(user.name)
-        setEmail(user.email)
-        setIsAdmin(user.isAdmin)
+      if (successUpdate) {
+        dispatch(userUpdateSlice.actions.reset())
+        router.push('/admin/userlist')
+      } else {
+        if (!user?.name || user?._id !== userId) {
+          dispatch(getUserDetails(userId))
+        } else if (user) {
+          setName(user.name)
+          setEmail(user.email)
+          setIsAdmin(user.isAdmin)
+        }
       }
     }
-  }, [user, userId, dispatch])
+  }, [user, userId, dispatch, router, successUpdate])
 
-  const submitHandler = useCallback((e: SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault()
-  }, [])
+  const submitHandler = useCallback(
+    (e: SyntheticEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      dispatch(updateUser({ id: userId, name, email, isAdmin }))
+    },
+    [dispatch, userId, name, email, isAdmin]
+  )
 
   return (
     <>
@@ -45,6 +67,9 @@ const UserEditScreen: FunctionComponent = () => {
       </Link>
       <FormContainer>
         <h1>Edit User</h1>
+        {loadingUpdate && <Loader />}
+        {errorUpdate && <Message variant="danger">{errorUpdate}</Message>}
+
         {loading ? (
           <Loader />
         ) : error ? (

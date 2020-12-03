@@ -40,6 +40,7 @@ import {
   userLoginSlice,
   userRegisterSlice,
   userUpdateProfileSlice,
+  userUpdateSlice,
 } from './reducers/userReducers'
 
 export type StoreType = EnhancedStore<RootState, AnyAction, [ThunkMiddlewareFor<RootState>]>
@@ -72,6 +73,7 @@ function createReducer(isServer: boolean): Reducer {
     userLogin: optionalPersistReducer(isServer, userLoginSlice.reducer, userLoginPersistConfig),
     userRegister: userRegisterSlice.reducer,
     userDetails: userDetailsSlice.reducer,
+    userUpdate: userUpdateSlice.reducer,
     userList: userListSlice.reducer,
     userDelete: userDeleteSlice.reducer,
     userUpdateProfile: userUpdateProfileSlice.reducer,

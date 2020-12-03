@@ -50,6 +50,30 @@ export const registerUser = createAsyncThunk<
   return user
 })
 
+export const updateUser = createAsyncThunk<
+  IUserWithId,
+  { id: string; name: string; email: string; isAdmin: boolean }
+>('USER_UPDATE', async (args, thunkAPI) => {
+  const state: RootState = thunkAPI.getState() as RootState
+  if (!state.userLogin.userInfo) {
+    throw new Error('getUserDetails without logged in user')
+  }
+  const token = state.userLogin.userInfo.token
+
+  const { id, name, email, isAdmin } = args
+  const response = await fetch(`/api/users/${id}`, {
+    body: JSON.stringify({ email, isAdmin, name }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+    method: 'PUT',
+  })
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data?.message ?? response.statusText)
+  }
+  const user = data as IUserWithId
+  return user
+})
+
 export const getUserDetails = createAsyncThunk<IUserWithId, string>(
   'USER_DETAILS',
   async (userId, thunkAPI) => {
@@ -258,6 +282,10 @@ export const userDetailsSlice = createSlice({
       state.loading = false
       state.user = payload
     })
+    builder.addCase(updateUser.fulfilled, (state, { payload }) => {
+      state.loading = false
+      state.user = payload
+    })
     builder.addCase(getUserDetails.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
@@ -380,6 +408,44 @@ export const userDeleteSlice = createSlice({
       state.loading = false
       state.error = action.error.message
       state.success = false
+    })
+  },
+})
+
+export interface UserUpdateState {
+  loading: boolean
+  success: boolean
+  error?: string
+}
+
+const initialUserUpdateState: UserUpdateState = {
+  loading: false,
+  success: false,
+  error: undefined,
+}
+
+export const userUpdateSlice = createSlice({
+  name: 'userUpdate',
+  initialState: initialUserUpdateState,
+  reducers: {
+    reset: (state) => {
+      state.error = undefined
+      state.loading = false
+      state.success = false
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(updateUser.pending, (state) => {
+      state.loading = true
+      state.success = false
+    })
+    builder.addCase(updateUser.fulfilled, (state) => {
+      state.loading = false
+      state.success = true
+    })
+    builder.addCase(updateUser.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
     })
   },
 })
