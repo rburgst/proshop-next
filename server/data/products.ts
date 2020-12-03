@@ -1,4 +1,4 @@
-import { ICreateProductInput } from '../../../server/models/productModel'
+import { ICreateProductInput } from '../models/productModel'
 
 const products: ICreateProductInput[] = [
   {

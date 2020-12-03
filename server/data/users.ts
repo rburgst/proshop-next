@@ -1,4 +1,4 @@
-import { ICreateUserInput } from '../../../server/models/userModel'
+import { ICreateUserInput } from '../models/userModel'
 
 const users: ICreateUserInput[] = [
   {

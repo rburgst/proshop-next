@@ -2,9 +2,9 @@ import 'colorts/lib/string'
 
 import dotenv from 'dotenv-flow'
 
-import products from '../pages/api/data/products'
-import users from '../pages/api/data/users'
 import connectDB from './config/db'
+import products from './data/products'
+import users from './data/users'
 import Order from './models/orderModel'
 import Product from './models/productModel'
 import User from './models/userModel'
