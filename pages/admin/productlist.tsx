@@ -120,11 +120,11 @@ const ProductListScreen: FunctionComponent = () => {
                 <td>{product.category}</td>
                 <td>{product.brand}</td>
                 <td>
-                  <Link href={`/admin/user/${product._id}/edit`}>
+                  <Link href={`/admin/product/${product._id}/edit`}>
                     <Button
                       variant="light"
                       as="a"
-                      href={`/admin/user/${product._id}/edit`}
+                      href={`/admin/product/${product._id}/edit`}
                       className="btn-sm"
                     >
                       <FontAwesomeIcon icon="edit" />

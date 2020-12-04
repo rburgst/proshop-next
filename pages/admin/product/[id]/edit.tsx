@@ -1,6 +1,14 @@
+import fetch from 'isomorphic-unfetch'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FunctionComponent, SyntheticEvent, useCallback, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  FunctionComponent,
+  SyntheticEvent,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react'
 import { Button, Form } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
@@ -14,6 +22,7 @@ import {
   ProductUpdateState,
   updateProduct,
 } from '../../../../frontend/reducers/productReducers'
+import { UserLoginState } from '../../../../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../../../../frontend/store'
 import { IProductWithId } from '../../../../server/models/productModel'
 
@@ -25,10 +34,13 @@ const ProductEditScreen: FunctionComponent = () => {
   const [category, setCategory] = useState('')
   const [description, setDescription] = useState('')
   const [countInStock, setCountInStock] = useState(0)
+  const [uploading, setUploading] = useState(false)
 
   const router = useRouter()
   const dispatch = useAppDispatch()
 
+  const userLogin = useSelector((state: RootState) => state.userLogin as UserLoginState)
+  const { userInfo } = userLogin
   const productDetails = useSelector(
     (state: RootState) => state.productDetails as ProductDetailsState
   )
@@ -64,6 +76,37 @@ const ProductEditScreen: FunctionComponent = () => {
     }
   }, [product, productId, dispatch, router, successUpdate])
 
+  const uploadFileHandler = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) {
+        throw new Error('no file provided')
+      }
+      const formData = new FormData()
+      formData.append('image', file)
+      setUploading(true)
+      try {
+        const token = userInfo?.token
+        if (!token) {
+          throw new Error('no auth')
+        }
+        const response = await fetch(`/api/upload`, {
+          body: formData,
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          method: 'POST',
+        })
+        const data = await response.text()
+        setImage(data)
+        setUploading(false)
+      } catch (error) {
+        console.error('error uploading', error)
+        setUploading(false)
+      }
+    },
+    [userInfo]
+  )
   const submitHandler = useCallback(
     (e: SyntheticEvent<HTMLFormElement>) => {
       e.preventDefault()
@@ -123,6 +166,9 @@ const ProductEditScreen: FunctionComponent = () => {
                 value={image}
                 onChange={(e) => setImage(e.currentTarget.value)}
               ></Form.Control>
+              <Form.File id="image-file" label="Choose file" custom onChange={uploadFileHandler} />
+
+              {uploading && <Loader />}
             </Form.Group>
 
             <Form.Group controlId="brand">
