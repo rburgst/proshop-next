@@ -4,7 +4,7 @@ import { Col, Row } from 'react-bootstrap'
 
 import Product from '../../components/Product'
 import connectDB from '../../server/config/db'
-import ProductModel, { IProductWithId } from '../../server/models/productModel'
+import ProductModel, { IProductDoc, IProductWithId } from '../../server/models/productModel'
 
 interface ProductsProps {
   products: IProductWithId[]
@@ -28,7 +28,7 @@ const Home: FunctionComponent<ProductsProps> = ({ products }) => {
 export const getServerSideProps: GetServerSideProps = async () => {
   await connectDB()
   console.log('get server props')
-  const products = await ProductModel.find({}).lean()
+  const products = (await ProductModel.find({}).lean()) as IProductDoc[]
   const leanProducts = products.map((product) => ({
     ...product,
     _id: product._id.toString(),

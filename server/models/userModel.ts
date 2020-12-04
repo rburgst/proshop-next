@@ -62,11 +62,11 @@ userSchema.methods.matchPassword = async function (givenPassword: string): Promi
 
 userSchema.pre<IUserDoc>('save', async function (next) {
   if (!this.isModified('password')) {
-    next()
+    next(null)
   } else {
     const salt = await bcrypt.genSalt(10)
     this.password = await bcrypt.hash(this.password, salt)
-    next()
+    next(null)
   }
 })
 

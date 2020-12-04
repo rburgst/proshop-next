@@ -44,7 +44,7 @@ async function getAllUsers(
 ): Promise<void> {
   await connectDB()
   const users = await User.find().select('-password')
-  res.json(users)
+  res.json(users as IUserWithId[])
 }
 
 const handler = nc({ onError: onError }).post(registerUser).get(protect, isAdmin, getAllUsers)
