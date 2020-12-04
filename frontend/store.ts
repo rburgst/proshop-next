@@ -33,9 +33,11 @@ import {
   orderPaySlice,
 } from './reducers/orderReducers'
 import {
-  ProductDeleteSlice,
+  productCreateSlice,
+  productDeleteSlice,
   productDetailsSlice,
   productListSlice,
+  productUpdateSlice,
 } from './reducers/productReducers'
 import {
   userDeleteSlice,
@@ -73,7 +75,9 @@ function createReducer(isServer: boolean): Reducer {
   const rootReducer = combineReducers({
     productList: productListSlice.reducer,
     productDetails: productDetailsSlice.reducer,
-    productDelete: ProductDeleteSlice.reducer,
+    productDelete: productDeleteSlice.reducer,
+    productCreate: productCreateSlice.reducer,
+    productUpdate: productUpdateSlice.reducer,
     cart: optionalPersistReducer(isServer, cartSlice.reducer, cartPersistConfig),
     userLogin: optionalPersistReducer(isServer, userLoginSlice.reducer, userLoginPersistConfig),
     userRegister: userRegisterSlice.reducer,

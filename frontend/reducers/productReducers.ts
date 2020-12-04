@@ -1,8 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import fetch from 'isomorphic-unfetch'
 
-import { IProductWithId } from '../../server/models/productModel'
+import { ICreateProductInput, IProductWithId } from '../../server/models/productModel'
 import { RootState } from '../store'
+import { UserLoginState } from './userReducers'
 
 export type ProductListState = {
   loading: boolean
@@ -55,6 +56,69 @@ export const deleteProduct = createAsyncThunk<boolean, string>(
       throw new Error(data?.message ?? response.statusText)
     }
     return true
+  }
+)
+
+export const createProduct = createAsyncThunk<IProductWithId>(
+  'PRODUCT_CREATE',
+  async (payload: void, thunkAPI) => {
+    const state: RootState = thunkAPI.getState()
+    const userLogin: UserLoginState = state.userLogin
+    const token = userLogin.userInfo?.token
+
+    if (!token) {
+      throw new Error('no user login token')
+    }
+    const response = await fetch(`/api/products`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText)
+    }
+    const product = data as IProductWithId
+    return product
+  }
+)
+
+export const updateProduct = createAsyncThunk<IProductWithId, IProductWithId>(
+  'PRODUCT_UPDATE',
+  async (payload: IProductWithId, thunkAPI) => {
+    const state: RootState = thunkAPI.getState()
+    const userLogin: UserLoginState = state.userLogin
+    const token = userLogin.userInfo?.token
+
+    if (!token) {
+      throw new Error('no user login token')
+    }
+    const updatedProduct: ICreateProductInput = {
+      name: payload.name,
+      description: payload.description,
+      brand: payload.brand,
+      category: payload.category,
+      countInStock: payload.countInStock,
+      image: payload.image,
+      price: payload.price,
+    } as ICreateProductInput
+
+    const response = await fetch(`/api/products/${payload._id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updatedProduct),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText)
+    }
+    const product = data as IProductWithId
+    return product
   }
 )
 
@@ -121,7 +185,7 @@ const initialProductDeleteState: ProductDeleteState = {
   success: false,
 }
 
-export const ProductDeleteSlice = createSlice({
+export const productDeleteSlice = createSlice({
   name: 'productDelete',
   initialState: initialProductDeleteState,
   reducers: {},
@@ -138,6 +202,80 @@ export const ProductDeleteSlice = createSlice({
       state.loading = false
       state.error = action.error.message
       state.success = false
+    })
+  },
+})
+
+export interface ProductCreateState {
+  loading: boolean
+  success?: boolean
+  product?: IProductWithId
+  error?: string
+}
+
+const initialProductCreateState: ProductCreateState = { loading: false }
+
+export const productCreateSlice = createSlice({
+  name: 'productCreate',
+  initialState: initialProductCreateState,
+  reducers: {
+    reset: (state) => {
+      state.error = undefined
+      state.loading = false
+      state.product = undefined
+      state.success = false
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(createProduct.pending, (state) => {
+      state.loading = true
+      state.error = undefined
+    })
+    builder.addCase(createProduct.fulfilled, (state, { payload }) => {
+      state.loading = false
+      state.success = true
+      state.product = payload
+    })
+    builder.addCase(createProduct.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
+    })
+  },
+})
+
+export interface ProductUpdateState {
+  loading: boolean
+  success?: boolean
+  product?: IProductWithId
+  error?: string
+}
+
+const initialProductUpdateState: ProductUpdateState = { loading: false }
+
+export const productUpdateSlice = createSlice({
+  name: 'productUpdate',
+  initialState: initialProductUpdateState,
+  reducers: {
+    reset: (state) => {
+      state.error = undefined
+      state.loading = false
+      state.product = undefined
+      state.success = false
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(updateProduct.pending, (state) => {
+      state.loading = true
+      state.error = undefined
+    })
+    builder.addCase(updateProduct.fulfilled, (state, { payload }) => {
+      state.loading = false
+      state.success = true
+      state.product = payload
+    })
+    builder.addCase(updateProduct.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
     })
   },
 })
