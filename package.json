@@ -48,6 +48,7 @@
     "bcryptjs": "^2.4.3",
     "colorts": "^0.1.63",
     "dotenv-flow": "^3.2.0",
+    "formidable-serverless": "^1.0.3",
     "isomorphic-unfetch": "^3.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.3",
