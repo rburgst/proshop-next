@@ -5532,7 +5532,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"next-redux-wrapper@npm:*":
+"next-redux-wrapper@npm:*, next-redux-wrapper@npm:^6.0.2":
   version: 6.0.2
   resolution: "next-redux-wrapper@npm:6.0.2"
   peerDependencies:
@@ -6521,6 +6521,7 @@ fsevents@~2.1.2:
     mongoose: ^5.10.15
     next: 10.0.2
     next-connect: ^0.9.1
+    next-redux-wrapper: ^6.0.2
     prettier: ^2.2.1
     react: 17.0.1
     react-bootstrap: ^1.4.0
