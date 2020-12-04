@@ -25,13 +25,30 @@ const createProduct = async (req: NextApiRequestWithUser, res: NextApiResponse):
   console.error('create product')
   await connectDB()
 
-  const newProduct = req.body as IProduct
-  newProduct.user = req.user
+  let newProduct = req.body as IProduct
+
+  if (!newProduct?.name) {
+    newProduct = {
+      name: 'Sample name',
+      price: 0,
+      image: '/images/sample.jpg',
+      brand: 'Sample brand',
+      category: 'Sample category',
+      countInStock: 0,
+      numReviews: 0,
+      description: 'Sample description',
+      rating: 0,
+      user: req.user._id,
+      reviews: [],
+    }
+  } else {
+    newProduct.user = req.user._id
+  }
 
   const order = new Product(newProduct)
 
   const createdProduct = await order.save()
-  res.json(createdProduct)
+  res.status(201).json(createdProduct)
 }
 
 export default nc({ onError: onError }).get(getAllProducts).post(protect, isAdmin, createProduct)
