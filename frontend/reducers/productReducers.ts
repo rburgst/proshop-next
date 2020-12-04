@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import fetch from 'isomorphic-unfetch'
 
 import { IProductWithId } from '../../server/models/productModel'
+import { RootState } from '../store'
 
 export type ProductListState = {
   loading: boolean
@@ -34,6 +35,26 @@ export const fetchProduct = createAsyncThunk<IProductWithId, string>(
       throw new Error(data?.message ?? response.statusText)
     }
     return data as IProductWithId
+  }
+)
+
+export const deleteProduct = createAsyncThunk<boolean, string>(
+  'PRODUCT_DELETE',
+  async (productId, thunkAPI) => {
+    const state: RootState = thunkAPI.getState() as RootState
+    const token = state.userLogin.userInfo.token
+
+    const response = await fetch(`/api/products/${productId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      method: 'DELETE',
+    })
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText)
+    }
+    return true
   }
 )
 
@@ -84,6 +105,39 @@ export const productDetailsSlice = createSlice({
     builder.addCase(fetchProduct.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
+    })
+  },
+})
+
+export interface ProductDeleteState {
+  loading: boolean
+  error?: string
+  success: boolean
+}
+
+const initialProductDeleteState: ProductDeleteState = {
+  loading: false,
+  error: undefined,
+  success: false,
+}
+
+export const ProductDeleteSlice = createSlice({
+  name: 'productDelete',
+  initialState: initialProductDeleteState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(deleteProduct.pending, (state) => {
+      state.loading = true
+      state.success = false
+    })
+    builder.addCase(deleteProduct.fulfilled, (state) => {
+      state.loading = false
+      state.success = true
+    })
+    builder.addCase(deleteProduct.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
+      state.success = false
     })
   },
 })

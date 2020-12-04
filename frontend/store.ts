@@ -32,7 +32,11 @@ import {
   orderListMySlice,
   orderPaySlice,
 } from './reducers/orderReducers'
-import { productDetailsSlice, productListSlice } from './reducers/productReducers'
+import {
+  ProductDeleteSlice,
+  productDetailsSlice,
+  productListSlice,
+} from './reducers/productReducers'
 import {
   userDeleteSlice,
   userDetailsSlice,
@@ -69,6 +73,7 @@ function createReducer(isServer: boolean): Reducer {
   const rootReducer = combineReducers({
     productList: productListSlice.reducer,
     productDetails: productDetailsSlice.reducer,
+    productDelete: ProductDeleteSlice.reducer,
     cart: optionalPersistReducer(isServer, cartSlice.reducer, cartPersistConfig),
     userLogin: optionalPersistReducer(isServer, userLoginSlice.reducer, userLoginPersistConfig),
     userRegister: userRegisterSlice.reducer,

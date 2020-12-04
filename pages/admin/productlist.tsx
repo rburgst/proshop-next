@@ -7,7 +7,12 @@ import { useSelector } from 'react-redux'
 
 import Loader from '../../components/Loader'
 import Message from '../../components/Message'
-import { fetchProducts, ProductListState } from '../../frontend/reducers/productReducers'
+import {
+  deleteProduct,
+  fetchProducts,
+  ProductDeleteState,
+  ProductListState,
+} from '../../frontend/reducers/productReducers'
 import { UserLoginState } from '../../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../../frontend/store'
 
@@ -17,10 +22,14 @@ const ProductListScreen: FunctionComponent = () => {
   const { loading, error, products } = productList
   const userLogin = useSelector((state: RootState) => state.userLogin as UserLoginState)
   const { userInfo } = userLogin
+  const productDelete = useSelector((state: RootState) => state.productDelete as ProductDeleteState)
+  const { loading: loadingDelete, success: successDelete, error: errorDelete } = productDelete
 
   const router = useRouter()
 
   useEffect(() => {
+    // lets use the successDelete here since otherwise the depencency linter would complain
+    console.log('successDelete', successDelete)
     if (userInfo) {
       if (userInfo.isAdmin) {
         dispatch(fetchProducts())
@@ -28,14 +37,18 @@ const ProductListScreen: FunctionComponent = () => {
         router.push('/login')
       }
     }
-  }, [router, dispatch, userInfo])
+  }, [router, dispatch, userInfo, successDelete])
 
-  const deleteHandler = useCallback((productId) => {
-    if (window.confirm('Are you sure')) {
-      // delete product
-      console.log('delete product', productId)
-    }
-  }, [])
+  const deleteHandler = useCallback(
+    (productId) => {
+      if (window.confirm('Are you sure')) {
+        // delete product
+        console.log('delete product', productId)
+        dispatch(deleteProduct(productId))
+      }
+    },
+    [dispatch]
+  )
   const createProductHandler = useCallback(() => {
     console.log('create product')
   }, [])
@@ -51,7 +64,8 @@ const ProductListScreen: FunctionComponent = () => {
           </Button>
         </Col>
       </Row>
-      <h1>List Users</h1>
+      {loadingDelete && <Loader />}
+      {errorDelete && <Message variant="danger">{errorDelete}</Message>}
       {loading ? (
         <Loader />
       ) : error ? (
