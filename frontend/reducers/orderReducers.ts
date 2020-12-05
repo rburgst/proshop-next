@@ -83,6 +83,31 @@ export const listMyOrders = createAsyncThunk<IOrderWithId[]>(
   }
 )
 
+export const listAdminOrders = createAsyncThunk<IOrderWithUser[]>(
+  'ORDER_LIST_ALL',
+  async (args, thunkAPI) => {
+    const state: RootState = thunkAPI.getState()
+    const userLogin: UserLoginState = state.userLogin
+    const token = userLogin.userInfo?.token
+
+    if (!token) {
+      throw new Error('no user login token')
+    }
+    const response = await fetch(`/api/orders`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText)
+    }
+    const order = data as IOrderWithUser[]
+    return order
+  }
+)
+
 export interface PayData {
   paymentResult: PaymentResult
   orderId: string
@@ -121,6 +146,13 @@ export interface IOrderWithId extends IOrder {
   _id: string
   createdAt: string
   updatedAt: string
+}
+
+export interface IOrderWithUser extends IOrderWithId {
+  user: {
+    name: string
+    _id: string
+  }
 }
 
 export interface OrderCreateState {
@@ -256,6 +288,42 @@ export const orderListMySlice = createSlice({
       state.orders = payload
     })
     builder.addCase(listMyOrders.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
+    })
+    builder.addCase(logout, (state) => {
+      state.error = undefined
+      state.loading = false
+      state.orders = []
+    })
+  },
+})
+
+export interface OrderListState {
+  loading: boolean
+  orders: IOrderWithUser[]
+  error?: string
+}
+
+const initialOrderListState: OrderListState = {
+  loading: false,
+  orders: [],
+}
+
+export const orderListSlice = createSlice({
+  name: 'orderList',
+  initialState: initialOrderListState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(listAdminOrders.pending, (state) => {
+      state.loading = true
+      state.error = undefined
+    })
+    builder.addCase(listAdminOrders.fulfilled, (state, { payload }) => {
+      state.loading = false
+      state.orders = payload
+    })
+    builder.addCase(listAdminOrders.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
     })

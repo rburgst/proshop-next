@@ -4,7 +4,11 @@ import nc from 'next-connect'
 import { CartItem } from '../../../frontend/reducers/cartReducers'
 import connectDB from '../../../server/config/db'
 import { onError } from '../../../server/middlewares'
-import { NextApiRequestWithUser, protect } from '../../../server/middlewares/authMiddleware'
+import {
+  isAdmin,
+  NextApiRequestWithUser,
+  protect,
+} from '../../../server/middlewares/authMiddleware'
 import Order, { IOrderInput } from '../../../server/models/orderModel'
 import Product from '../../../server/models/productModel'
 import { calculatePrices } from '../../../server/utils/prices'
@@ -57,4 +61,11 @@ const createOrder = async (req: NextApiRequestWithUser, res: NextApiResponse): P
   res.status(201).json(createdOrder)
 }
 
-export default nc({ onError: onError }).post(protect, createOrder)
+const getOrders = async (req: NextApiRequestWithUser, res: NextApiResponse): Promise<void> => {
+  console.log('get all orders')
+  await connectDB()
+  const orders = await Order.find().populate('user', '_id name')
+  res.json(orders)
+}
+
+export default nc({ onError: onError }).post(protect, createOrder).get(protect, isAdmin, getOrders)

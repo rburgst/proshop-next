@@ -30,6 +30,7 @@ import {
   orderCreateSlice,
   orderDetailsSlice,
   orderListMySlice,
+  orderListSlice,
   orderPaySlice,
 } from './reducers/orderReducers'
 import {
@@ -90,6 +91,7 @@ function createReducer(isServer: boolean): Reducer {
     orderDetails: orderDetailsSlice.reducer,
     orderPay: orderPaySlice.reducer,
     orderListMy: orderListMySlice.reducer,
+    orderList: orderListSlice.reducer,
   })
   return rootReducer
 }
