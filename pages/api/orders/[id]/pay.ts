@@ -42,5 +42,4 @@ const payOrder = async (req: NextApiRequestWithUser, res: NextApiResponse): Prom
     throw new Error('order not found')
   }
 }
-//export default withMiddleware(handler, protect)
 export default nc({ onError: onError }).put(protect, payOrder)

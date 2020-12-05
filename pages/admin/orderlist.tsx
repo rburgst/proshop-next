@@ -1,18 +1,13 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { FunctionComponent, useCallback, useEffect } from 'react'
-import { Button, Col, Row, Table } from 'react-bootstrap'
+import React, { FunctionComponent, useEffect } from 'react'
+import { Button, Table } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
 import Loader from '../../components/Loader'
 import Message from '../../components/Message'
 import { listAdminOrders, OrderListState } from '../../frontend/reducers/orderReducers'
-import {
-  createProduct,
-  deleteProduct,
-  fetchProducts,
-} from '../../frontend/reducers/productReducers'
 import { UserLoginState } from '../../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../../frontend/store'
 

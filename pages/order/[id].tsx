@@ -2,19 +2,23 @@ import { GetServerSideProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import { Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
+import { Button, Card, Col, Image, ListGroup, Row } from 'react-bootstrap'
 import { PayPalButton } from 'react-paypal-button-v2'
 import { useSelector } from 'react-redux'
 
 import Loader from '../../components/Loader'
 import Message from '../../components/Message'
 import {
+  deliverOrder,
   getOrderDetails,
+  orderDeliverSlice,
+  OrderDeliverState,
   OrderDetailsState,
   orderPaySlice,
   OrderPayState,
   payOrder,
 } from '../../frontend/reducers/orderReducers'
+import { UserLoginState } from '../../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../../frontend/store'
 import { OrderItem } from '../../server/models/orderModel'
 import { IUserWithId } from '../../server/models/userModel'
@@ -29,6 +33,10 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
   const { order, loading, error } = orderDetails
   const orderPay = useSelector((state: RootState) => state.orderPay as OrderPayState)
   const { loading: loadingPay, success: successPay } = orderPay
+  const orderDeliver = useSelector((state: RootState) => state.orderDeliver as OrderDeliverState)
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver
+  const userLogin = useSelector((state: RootState) => state.userLogin as UserLoginState)
+  const { userInfo } = userLogin
 
   const router = useRouter()
   const orderId = router.query.id as string
@@ -46,6 +54,10 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
       order
     )
 
+    if (!userInfo) {
+      router.push('/login')
+    }
+
     const addPaypalScript = (): void => {
       const script = document.createElement('script')
       script.type = 'text/javascript'
@@ -58,9 +70,10 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
     }
 
     if (orderId && !loading) {
-      if (!order || order._id !== orderId || successPay) {
+      if (!order || order._id !== orderId || successPay || successDeliver) {
         console.log('dispatch reset')
         dispatch(orderPaySlice.actions.reset())
+        dispatch(orderDeliverSlice.actions.reset())
         console.log('dispatch loading', orderId)
         dispatch(getOrderDetails(orderId))
       } else if (!order.isPaid) {
@@ -72,7 +85,7 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
         }
       }
     }
-  }, [orderId, dispatch, order, clientId, successPay, loading])
+  }, [orderId, dispatch, order, clientId, successPay, loading, successDeliver, router, userInfo])
   const itemsPrice = useMemo(() => {
     if (order?.orderItems) {
       const itemsPrice = order.orderItems.reduce((acc, cur) => acc + cur.qty * cur.price, 0)
@@ -90,6 +103,10 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
     },
     [dispatch, orderId]
   )
+
+  const deliverHandler = useCallback(() => {
+    dispatch(deliverOrder(orderId))
+  }, [dispatch, orderId])
 
   return loading ? (
     <Loader />
@@ -123,7 +140,9 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
                 {order.shippingAddress.country}
               </p>
               {order.isDelivered ? (
-                <Message variant="success">Delivered on {order.deliveredAt}</Message>
+                <Message variant="success">
+                  Delivered on {order.deliveredAt.toString().substring(0, 10)}
+                </Message>
               ) : (
                 <Message variant="danger">Not Delivered</Message>
               )}
@@ -135,7 +154,9 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
                 {order.paymentMethod}
               </p>
               {order.isPaid ? (
-                <Message variant="success">Paid on {order.paidAt}</Message>
+                <Message variant="success">
+                  Paid on {order.paidAt.toString().substring(0, 10)}
+                </Message>
               ) : (
                 <Message variant="danger">Not Paid</Message>
               )}
@@ -207,6 +228,14 @@ const OrderScreen: FunctionComponent<OrderScreenProps> = ({ clientId }) => {
                       onSuccess={successPaymentHandler}
                     ></PayPalButton>
                   )}
+                </ListGroup.Item>
+              )}
+              {order.isPaid && !order.isDelivered && userInfo?.isAdmin && (
+                <ListGroup.Item>
+                  {loadingDeliver && <Loader />}
+                  <Button type="button" className="btn btn-block" onClick={deliverHandler}>
+                    Mark as delivered
+                  </Button>
                 </ListGroup.Item>
               )}
             </ListGroup>

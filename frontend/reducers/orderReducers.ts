@@ -141,6 +141,31 @@ export const payOrder = createAsyncThunk<IOrderWithId, PayData>(
   }
 )
 
+export const deliverOrder = createAsyncThunk<IOrderWithId, string>(
+  'ORDER_DELIVER',
+  async (orderId: string, thunkAPI) => {
+    const state: RootState = thunkAPI.getState()
+    const userLogin: UserLoginState = state.userLogin
+    const token = userLogin.userInfo?.token
+
+    if (!token) {
+      throw new Error('no user login token')
+    }
+    const response = await fetch(`/api/orders/${orderId}/deliver`, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    })
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText)
+    }
+    const updatedOrder = data as IOrderWithId
+    return updatedOrder
+  }
+)
+
 // Slice
 export interface IOrderWithId extends IOrder {
   _id: string
@@ -148,6 +173,7 @@ export interface IOrderWithId extends IOrder {
   updatedAt: string
 }
 
+// @ts-ignore: the user is already defined in the super
 export interface IOrderWithUser extends IOrderWithId {
   user: {
     name: string
@@ -331,6 +357,46 @@ export const orderListSlice = createSlice({
       state.error = undefined
       state.loading = false
       state.orders = []
+    })
+  },
+})
+
+export interface OrderDeliverState {
+  loading: boolean
+  order?: IOrderWithId
+  error?: string
+  success?: boolean
+}
+
+const initialOrderDeliverState: OrderDeliverState = {
+  loading: false,
+  order: undefined,
+}
+
+export const orderDeliverSlice = createSlice({
+  name: 'orderDeliver',
+  initialState: initialOrderDeliverState,
+  reducers: {
+    reset: (state) => {
+      state.error = undefined
+      state.loading = false
+      state.order = undefined
+      state.success = false
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(deliverOrder.pending, (state) => {
+      state.loading = true
+      state.error = undefined
+    })
+    builder.addCase(deliverOrder.fulfilled, (state, { payload }) => {
+      state.loading = false
+      state.order = payload
+      state.success = true
+    })
+    builder.addCase(deliverOrder.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
     })
   },
 })

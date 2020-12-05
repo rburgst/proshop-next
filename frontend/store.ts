@@ -28,6 +28,7 @@ import storage from 'redux-persist/lib/storage'
 import { cartSlice } from './reducers/cartReducers'
 import {
   orderCreateSlice,
+  orderDeliverSlice,
   orderDetailsSlice,
   orderListMySlice,
   orderListSlice,
@@ -92,6 +93,7 @@ function createReducer(isServer: boolean): Reducer {
     orderPay: orderPaySlice.reducer,
     orderListMy: orderListMySlice.reducer,
     orderList: orderListSlice.reducer,
+    orderDeliver: orderDeliverSlice.reducer,
   })
   return rootReducer
 }
