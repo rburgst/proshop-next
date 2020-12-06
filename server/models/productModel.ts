@@ -20,7 +20,14 @@ export interface IReview {
   name: string
   rating: number
   comment: string
+  user: ID | IUserDoc
 }
+
+export interface ICreateReviewInput {
+  rating: IReview['rating']
+  comment: IReview['comment']
+}
+
 export interface IReviewDoc extends IReview, mongoose.Document {}
 
 export interface IProduct {
@@ -47,6 +54,11 @@ const ReviewSchemaFields: Record<keyof IReview, any> = {
   name: { type: String, required: true },
   rating: { type: Number, required: true },
   comment: { type: String, required: true },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
 }
 
 const reviewSchema = new mongoose.Schema(ReviewSchemaFields, {

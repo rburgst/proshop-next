@@ -3,14 +3,14 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import nc from 'next-connect'
 
-import connectDB from '../../../server/config/db'
-import { onError } from '../../../server/middlewares'
+import connectDB from '../../../../server/config/db'
+import { onError } from '../../../../server/middlewares'
 import {
   isAdmin,
   NextApiRequestWithUser,
   protect,
-} from '../../../server/middlewares/authMiddleware'
-import productModel, { IProduct } from '../../../server/models/productModel'
+} from '../../../../server/middlewares/authMiddleware'
+import productModel, { IProduct } from '../../../../server/models/productModel'
 
 const getProductById = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
   await connectDB()
