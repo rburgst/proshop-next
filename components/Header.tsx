@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 
 import { logout } from '../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../frontend/store'
+import SearchBox from './SearchBox'
 
 const Header: FunctionComponent = () => {
   const userLogin = useSelector((state: RootState) => state.userLogin)
@@ -22,6 +23,7 @@ const Header: FunctionComponent = () => {
           </Link>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            <SearchBox />
             <Nav className="ml-auto">
               <Link href="/products">
                 <Nav.Link as="a" href="/products">

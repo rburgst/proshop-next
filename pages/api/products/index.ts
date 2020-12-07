@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 
+import { FilterQuery } from 'mongoose'
 import { NextApiRequest, NextApiResponse } from 'next'
 import nc from 'next-connect'
 
@@ -10,12 +11,17 @@ import {
   protect,
 } from '../../../server/middlewares/authMiddleware'
 import { onError } from '../../../server/middlewares/index'
-import Product, { IProduct } from '../../../server/models/productModel'
+import Product, { IProduct, IProductDoc } from '../../../server/models/productModel'
 
 const getAllProducts = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  console.error('get products')
+  const keyword = req.query.keyword
+  const query: FilterQuery<IProductDoc> = keyword
+    ? { name: { $regex: keyword as string, $options: 'i' } }
+    : {}
+
+  console.error('get products, keyword', keyword)
   await connectDB()
-  const products = await Product.find({})
+  const products = await Product.find(query)
   res.statusCode = 200
 
   res.json(products)

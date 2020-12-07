@@ -22,14 +22,17 @@ const initialProductListState: ProductListState = {
 
 // thunks
 
-export const fetchProducts = createAsyncThunk<IProductWithId[]>('PRODUCT_LIST', async () => {
-  const response = await fetch('/api/products')
-  const data = await response.json()
-  if (!response.ok) {
-    throw new Error(data?.message ?? response.statusText)
+export const fetchProducts = createAsyncThunk<IProductWithId[], string>(
+  'PRODUCT_LIST',
+  async (keyword) => {
+    const response = await fetch(`/api/products?keyword=${keyword}`)
+    const data = await response.json()
+    if (!response.ok) {
+      throw new Error(data?.message ?? response.statusText)
+    }
+    return data as IProductWithId[]
   }
-  return data as IProductWithId[]
-})
+)
 
 export const fetchProduct = createAsyncThunk<IProductWithId, string>(
   'PRODUCT_DETAILS',
