@@ -10,7 +10,7 @@ import Order from '../../../../server/models/orderModel'
 import { IUserDoc } from '../../../../server/models/userModel'
 
 const getOrderById = async (req: NextApiRequestWithUser, res: NextApiResponse): Promise<void> => {
-  console.log('get single product by id', req.query.id, 'user', req.user)
+  console.log('get single order by id', req.query.id, 'user', req.user)
   await connectDB()
   const order = await Order.findById(req.query.id).populate('user', 'name email')
   if (!order) {

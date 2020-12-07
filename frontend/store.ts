@@ -35,6 +35,7 @@ import {
   orderPaySlice,
 } from './reducers/orderReducers'
 import {
+  createProductReviewSlice,
   productCreateSlice,
   productDeleteSlice,
   productDetailsSlice,
@@ -80,6 +81,7 @@ function createReducer(isServer: boolean): Reducer {
     productDelete: productDeleteSlice.reducer,
     productCreate: productCreateSlice.reducer,
     productUpdate: productUpdateSlice.reducer,
+    createProductReview: createProductReviewSlice.reducer,
     cart: optionalPersistReducer(isServer, cartSlice.reducer, cartPersistConfig),
     userLogin: optionalPersistReducer(isServer, userLoginSlice.reducer, userLoginPersistConfig),
     userRegister: userRegisterSlice.reducer,
