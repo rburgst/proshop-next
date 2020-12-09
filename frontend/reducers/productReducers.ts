@@ -35,10 +35,10 @@ export const fetchProducts = createAsyncThunk<
   const response = await fetch(
     `/api/products?keyword=${keyword ?? ''}&pageNumber=${pageNumber ?? 1}`
   )
-    const data = await response.json()
-    if (!response.ok) {
-      throw new Error(data?.message ?? response.statusText)
-    }
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data?.message ?? response.statusText)
+  }
   return data as IProductPage
 })
 
@@ -365,6 +365,37 @@ export const createProductReviewSlice = createSlice({
       state.success = true
     })
     builder.addCase(createProductReview.rejected, (state, action) => {
+      state.loading = false
+      state.error = action.error.message
+    })
+  },
+})
+
+export type ProductTopRatedState = {
+  loading: boolean
+  products: IProductWithId[]
+  error?: string
+}
+
+const initialProductTopRatedState: ProductTopRatedState = {
+  loading: false,
+  products: [],
+}
+export const productTopSlice = createSlice({
+  name: 'productTop',
+  initialState: initialProductTopRatedState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder.addCase(listTopProducts.pending, (state) => {
+      state.loading = true
+      state.products = []
+      state.error = undefined
+    })
+    builder.addCase(listTopProducts.fulfilled, (state, { payload }) => {
+      state.loading = false
+      state.products = payload
+    })
+    builder.addCase(listTopProducts.rejected, (state, action) => {
       state.loading = false
       state.error = action.error.message
     })

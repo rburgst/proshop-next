@@ -40,6 +40,7 @@ import {
   productDeleteSlice,
   productDetailsSlice,
   productListSlice,
+  productTopSlice as productTopRatedSlice,
   productUpdateSlice,
 } from './reducers/productReducers'
 import {
@@ -77,6 +78,7 @@ function createReducer(isServer: boolean): Reducer {
   }
   const rootReducer = combineReducers({
     productList: productListSlice.reducer,
+    productTopRated: productTopRatedSlice.reducer,
     productDetails: productDetailsSlice.reducer,
     productDelete: productDeleteSlice.reducer,
     productCreate: productCreateSlice.reducer,
