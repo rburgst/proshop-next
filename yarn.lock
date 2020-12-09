@@ -5596,6 +5596,13 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"next-secure-headers@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "next-secure-headers@npm:2.0.0"
+  checksum: 9c0d33de644d5593280e09bbcf1362cf859bd63cff1b1fbbb59d23873e1dcb365e8a78d947b621a4102d17f38f38a58183cb087f440d950d24fbdfd4bd53ee63
+  languageName: node
+  linkType: hard
+
 "next-tick@npm:~1.0.0":
   version: 1.0.0
   resolution: "next-tick@npm:1.0.0"
@@ -6578,6 +6585,7 @@ fsevents@~2.1.2:
     next: 10.0.3
     next-connect: ^0.9.1
     next-redux-wrapper: ^6.0.2
+    next-secure-headers: ^2.0.0
     prettier: ^2.2.1
     react: 17.0.1
     react-bootstrap: ^1.4.0
