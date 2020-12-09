@@ -27,15 +27,15 @@ const ProductCarousel: FunctionComponent = () => {
     <Carousel pause="hover" className="bg-dark">
       {products?.map((product) => (
         <Carousel.Item key={product._id}>
-          <Link href={`/product/${product._id}`}>
-            <>
+          <Link href={`/product/${product._id}`} passHref>
+            <a>
               <Image src={product.image} alt={product.name} fluid />
               <Carousel.Caption className="carousel-caption">
                 <h2>
                   {product.name} (${product.price})
                 </h2>
               </Carousel.Caption>
-            </>
+            </a>
           </Link>
         </Carousel.Item>
       ))}
