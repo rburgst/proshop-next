@@ -27,7 +27,7 @@ const getAllProducts = async (
     ? { name: { $regex: keyword as string, $options: 'i' } }
     : {}
 
-  const pageSize = 2
+  const pageSize = Number(req.query.pageSize ?? 10)
   const page = Number(req.query?.pageNumber ?? 1)
 
   console.error('get products, keyword', keyword)

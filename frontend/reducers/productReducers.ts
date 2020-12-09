@@ -29,11 +29,13 @@ const initialProductListState: ProductListState = {
 
 export const fetchProducts = createAsyncThunk<
   IProductPage,
-  { keyword: string; pageNumber: number }
+  { keyword: string; pageNumber?: number; pageSize?: number }
 >('PRODUCT_LIST', async (args) => {
-  const { keyword, pageNumber } = args
+  const { keyword } = args
+  const pageSize = args.pageSize ?? 10
+  const pageNumber = args.pageNumber ?? 1
   const response = await fetch(
-    `/api/products?keyword=${keyword ?? ''}&pageNumber=${pageNumber ?? 1}`
+    `/api/products?keyword=${keyword ?? ''}&pageNumber=${pageNumber}&pageSize=${pageSize}`
   )
   const data = await response.json()
   if (!response.ok) {
