@@ -4,6 +4,7 @@ import fetch from 'isomorphic-unfetch'
 import {
   ICreateProductInput,
   ICreateReviewInput,
+  IProductPage,
   IProductWithId,
 } from '../../server/models/productModel'
 import { RootState } from '../store'
@@ -13,26 +14,42 @@ export type ProductListState = {
   loading: boolean
   products: IProductWithId[]
   error?: string
+  page: number
+  pages: number
 }
 
 const initialProductListState: ProductListState = {
   loading: false,
   products: [],
+  page: 1,
+  pages: 1,
 }
 
 // thunks
 
-export const fetchProducts = createAsyncThunk<IProductWithId[], string>(
-  'PRODUCT_LIST',
-  async (keyword) => {
-    const response = await fetch(`/api/products?keyword=${keyword}`)
+export const fetchProducts = createAsyncThunk<
+  IProductPage,
+  { keyword: string; pageNumber: number }
+>('PRODUCT_LIST', async (args) => {
+  const { keyword, pageNumber } = args
+  const response = await fetch(
+    `/api/products?keyword=${keyword ?? ''}&pageNumber=${pageNumber ?? 1}`
+  )
     const data = await response.json()
     if (!response.ok) {
       throw new Error(data?.message ?? response.statusText)
     }
-    return data as IProductWithId[]
+  return data as IProductPage
+})
+
+export const listTopProducts = createAsyncThunk<IProductWithId[], void>('PRODUCT_TOP', async () => {
+  const response = await fetch(`/api/products/top`)
+  const data = await response.json()
+  if (!response.ok) {
+    throw new Error(data?.message ?? response.statusText)
   }
-)
+  return data as IProductWithId[]
+})
 
 export const fetchProduct = createAsyncThunk<IProductWithId, string>(
   'PRODUCT_DETAILS',
@@ -168,10 +185,14 @@ export const productListSlice = createSlice({
     builder.addCase(fetchProducts.pending, (state) => {
       state.loading = true
       state.products = []
+      state.page = 1
+      state.pages = 1
     })
     builder.addCase(fetchProducts.fulfilled, (state, { payload }) => {
       state.loading = false
-      state.products = payload
+      state.products = payload.products
+      state.pages = payload.pages
+      state.page = payload.page
     })
     builder.addCase(fetchProducts.rejected, (state, action) => {
       state.loading = false

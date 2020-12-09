@@ -5,7 +5,12 @@ import HomeComponent from '../../components/HomeComponent'
 
 const SearchHome: FunctionComponent = () => {
   const router = useRouter()
-  return <HomeComponent keyword={router.query.keyword as string} />
+  return (
+    <HomeComponent
+      keyword={router.query.keyword as string}
+      pageNumber={Number(router.query.pageNumber ?? 1)}
+    />
+  )
 }
 
 export default SearchHome

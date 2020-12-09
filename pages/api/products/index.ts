@@ -11,20 +11,34 @@ import {
   protect,
 } from '../../../server/middlewares/authMiddleware'
 import { onError } from '../../../server/middlewares/index'
-import Product, { IProduct, IProductDoc } from '../../../server/models/productModel'
+import Product, {
+  IProduct,
+  IProductDoc,
+  IProductPage,
+  IProductWithId,
+} from '../../../server/models/productModel'
 
-const getAllProducts = async (req: NextApiRequest, res: NextApiResponse): Promise<void> => {
-  const keyword = req.query.keyword
+const getAllProducts = async (
+  req: NextApiRequest,
+  res: NextApiResponse<IProductPage>
+): Promise<void> => {
+  const keyword = req.query?.keyword
   const query: FilterQuery<IProductDoc> = keyword
     ? { name: { $regex: keyword as string, $options: 'i' } }
     : {}
 
+  const pageSize = 2
+  const page = Number(req.query?.pageNumber ?? 1)
+
   console.error('get products, keyword', keyword)
   await connectDB()
+  const count = await Product.countDocuments(query)
   const products = await Product.find(query)
+    .limit(pageSize)
+    .skip((page - 1) * pageSize)
   res.statusCode = 200
 
-  res.json(products)
+  res.json({ products: products as IProductWithId[], page, pages: Math.ceil(count / pageSize) })
 }
 
 const createProduct = async (req: NextApiRequestWithUser, res: NextApiResponse): Promise<void> => {
@@ -51,9 +65,9 @@ const createProduct = async (req: NextApiRequestWithUser, res: NextApiResponse):
     newProduct.user = req.user._id
   }
 
-  const order = new Product(newProduct)
+  const product = new Product(newProduct)
+  const createdProduct = await product.save()
 
-  const createdProduct = await order.save()
   res.status(201).json(createdProduct)
 }
 

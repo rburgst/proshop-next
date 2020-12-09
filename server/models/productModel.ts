@@ -46,6 +46,11 @@ export interface IProduct {
 export interface IProductWithId extends IProduct {
   _id: string
 }
+export interface IProductPage {
+  products: IProductWithId[]
+  page: number
+  pages: number
+}
 // see also https://hackernoon.com/how-to-link-mongoose-and-typescript-for-a-single-source-of-truth-94o3uqc
 export interface IProductDoc extends IProduct, mongoose.Document {}
 

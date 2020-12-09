@@ -5,8 +5,6 @@ import React, { FunctionComponent, useCallback, useEffect } from 'react'
 import { Button, Col, Row, Table } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 
-import Loader from '../../components/Loader'
-import Message from '../../components/Message'
 import {
   createProduct,
   deleteProduct,
@@ -15,14 +13,22 @@ import {
   ProductCreateState,
   ProductDeleteState,
   ProductListState,
-} from '../../frontend/reducers/productReducers'
-import { UserLoginState } from '../../frontend/reducers/userReducers'
-import { RootState, useAppDispatch } from '../../frontend/store'
+} from '../frontend/reducers/productReducers'
+import { UserLoginState } from '../frontend/reducers/userReducers'
+import { RootState, useAppDispatch } from '../frontend/store'
+import Loader from './Loader'
+import Message from './Message'
+import Paginate from './Paginate'
 
-const ProductListScreen: FunctionComponent = () => {
+interface AdminProductListComponentProps {
+  pageNumber: number
+}
+const AdminProductListComponent: FunctionComponent<AdminProductListComponentProps> = ({
+  pageNumber = 1,
+}) => {
   const dispatch = useAppDispatch()
   const productList = useSelector((state: RootState) => state.productList as ProductListState)
-  const { loading, error, products } = productList
+  const { loading, error, products, page, pages } = productList
   const userLogin = useSelector((state: RootState) => state.userLogin as UserLoginState)
   const { userInfo } = userLogin
   const productDelete = useSelector((state: RootState) => state.productDelete as ProductDeleteState)
@@ -36,18 +42,19 @@ const ProductListScreen: FunctionComponent = () => {
   } = productCreate
 
   const router = useRouter()
+  const { keyword } = router.query
 
   useEffect(() => {
     // lets use the successDelete here since otherwise the depencency linter would complain
     console.log('successDelete', successDelete)
     if (userInfo) {
       if (userInfo.isAdmin) {
-        dispatch(fetchProducts())
+        dispatch(fetchProducts({ keyword: '', pageNumber }))
       } else {
         router.push('/login')
       }
     }
-  }, [router, dispatch, userInfo, successDelete])
+  }, [router, dispatch, userInfo, successDelete, pageNumber])
 
   useEffect(() => {
     dispatch(productCreateSlice.actions.reset())
@@ -60,10 +67,10 @@ const ProductListScreen: FunctionComponent = () => {
       if (successCreate) {
         router.push(`/admin/product/${createdProduct?._id}/edit`)
       } else {
-        dispatch(fetchProducts())
+        dispatch(fetchProducts({ keyword: '', pageNumber }))
       }
     }
-  }, [router, dispatch, userInfo, successDelete, successCreate, createdProduct])
+  }, [router, dispatch, userInfo, successDelete, successCreate, createdProduct, pageNumber])
 
   const deleteHandler = useCallback(
     (productId) => {
@@ -100,51 +107,61 @@ const ProductListScreen: FunctionComponent = () => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <Table striped bordered hover responsive className={'table-sm'}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>NAME</th>
-              <th>PRICE</th>
-              <th>CATEGORY</th>
-              <th>BRAND</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.map((product) => (
-              <tr key={product._id}>
-                <td>{product._id}</td>
-                <td>{product.name}</td>
-                <td>${product.price}</td>
-                <td>{product.category}</td>
-                <td>{product.brand}</td>
-                <td>
-                  <Link href={`/admin/product/${product._id}/edit`}>
-                    <Button
-                      variant="light"
-                      as="a"
-                      href={`/admin/product/${product._id}/edit`}
-                      className="btn-sm"
-                    >
-                      <FontAwesomeIcon icon="edit" />
-                    </Button>
-                  </Link>
-                  <Button
-                    variant="danger"
-                    className="btn-sm"
-                    onClick={() => deleteHandler(product._id)}
-                  >
-                    <FontAwesomeIcon icon="trash" />
-                  </Button>
-                </td>
+        <>
+          <Table striped bordered hover responsive className={'table-sm'}>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>PRICE</th>
+                <th>CATEGORY</th>
+                <th>BRAND</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {products.map((product) => (
+                <tr key={product._id}>
+                  <td>{product._id}</td>
+                  <td>{product.name}</td>
+                  <td>${product.price}</td>
+                  <td>{product.category}</td>
+                  <td>{product.brand}</td>
+                  <td>
+                    <Link href={`/admin/product/${product._id}/edit`}>
+                      <Button
+                        variant="light"
+                        as="a"
+                        href={`/admin/product/${product._id}/edit`}
+                        className="btn-sm"
+                      >
+                        <FontAwesomeIcon icon="edit" />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="danger"
+                      className="btn-sm"
+                      onClick={() => deleteHandler(product._id)}
+                    >
+                      <FontAwesomeIcon icon="trash" />
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          {pages > 1 && (
+            <Paginate
+              isAdmin={true}
+              page={page}
+              pages={pages}
+              keyword={(keyword as string) ?? ''}
+            />
+          )}
+        </>
       )}
     </>
   )
 }
 
-export default ProductListScreen
+export default AdminProductListComponent
