@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 
 import Loader from '../../components/Loader'
 import Message from '../../components/Message'
+import Meta from '../../components/Meta'
 import Rating from '../../components/Rating'
 import {
   createProductReview,
@@ -76,6 +77,7 @@ const ProductScreen: FunctionComponent = () => {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
+          <Meta title={product.name} />
           <Row>
             <Col md={6}>
               <Image src={product.image} alt={product.name} fluid />

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React, { FunctionComponent, useEffect } from 'react'
 import { Col, Row } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
@@ -7,6 +8,7 @@ import { UserLoginState } from '../frontend/reducers/userReducers'
 import { RootState, useAppDispatch } from '../frontend/store'
 import Loader from './Loader'
 import Message from './Message'
+import Meta from './Meta'
 import Paginate from './Paginate'
 import Product from './Product'
 import ProductCarousel from './ProductCarousel'
@@ -28,7 +30,14 @@ const HomeComponent: FunctionComponent<HomeComponentProps> = ({ keyword = '', pa
 
   return (
     <>
-      {!keyword && <ProductCarousel />}
+      <Meta />
+      {!keyword ? (
+        <ProductCarousel />
+      ) : (
+        <Link href="/">
+          <a className="btn btn-light">Go Back</a>
+        </Link>
+      )}
       <h1>Latest Products</h1>
       {loading ? (
         <Loader />

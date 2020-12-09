@@ -484,6 +484,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-helmet@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@types/react-helmet@npm:6.1.0"
+  dependencies:
+    "@types/react": "*"
+  checksum: b7aaa3aa2d81cd3b14a0e77a858de86934a3400f4ec35945117edb3979b8a41130e70b8a27241de295195e365962a9b5bc149a2a029d23795fd0f6c740d1de77
+  languageName: node
+  linkType: hard
+
 "@types/react-redux@npm:^7.1.11":
   version: 7.1.11
   resolution: "@types/react-redux@npm:7.1.11"
@@ -6542,6 +6551,7 @@ fsevents@~2.1.2:
     "@types/node": ^14.14.6
     "@types/react": ^17.0.0
     "@types/react-bootstrap": ^0.32.25
+    "@types/react-helmet": ^6.1.0
     "@types/react-redux": ^7.1.11
     "@typescript-eslint/eslint-plugin": ^4.9.0
     "@typescript-eslint/parser": ^4.9.0
@@ -6572,6 +6582,7 @@ fsevents@~2.1.2:
     react: 17.0.1
     react-bootstrap: ^1.4.0
     react-dom: 17.0.1
+    react-helmet: ^6.1.0
     react-paypal-button-v2: ^2.6.2
     react-redux: ^7.2.2
     redux: ^4.0.5
@@ -6777,6 +6788,27 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:^3.1.1":
+  version: 3.2.0
+  resolution: "react-fast-compare@npm:3.2.0"
+  checksum: 6fe65c889eb4f326e97769135f97b3d63ac68737866f9c37f9625c9de4f5eaa9abed6f748eb3fd6a66808392118842916309cab7cfa99c67991f0c837433d6d2
+  languageName: node
+  linkType: hard
+
+"react-helmet@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "react-helmet@npm:6.1.0"
+  dependencies:
+    object-assign: ^4.1.1
+    prop-types: ^15.7.2
+    react-fast-compare: ^3.1.1
+    react-side-effect: ^2.1.0
+  peerDependencies:
+    react: ">=16.3.0"
+  checksum: 56fd795b0aecc89bac8d2733268751f0ef463bf6764090f8a801778741d4a6eaf135234cdaa50188bbda29c8e2d3ec43e9a42d1ec06b60092645c8754c7bad81
+  languageName: node
+  linkType: hard
+
 "react-is@npm:16.13.1, react-is@npm:^16.13.1, react-is@npm:^16.3.2, react-is@npm:^16.7.0, react-is@npm:^16.8.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -6848,6 +6880,15 @@ fsevents@~2.1.2:
   version: 0.8.3
   resolution: "react-refresh@npm:0.8.3"
   checksum: 38f06df8e0a20701b96e5d680838a3528d66cfb53db79843d30cb9517df3262ec596607147439975267bf0634bee77101db37298ea79b5742cc28664632f3c76
+  languageName: node
+  linkType: hard
+
+"react-side-effect@npm:^2.1.0":
+  version: 2.1.1
+  resolution: "react-side-effect@npm:2.1.1"
+  peerDependencies:
+    react: ^16.3.0 || ^17.0.0
+  checksum: 5896f7c126b9e7147e3ea6cc967dab8e3a2f6c395bd5327d16483adb91177866eec47770500a92fece866ea551f395484f6e6e078796002293bc1b53b7e65b26
   languageName: node
   linkType: hard
 
