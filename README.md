@@ -1,4 +1,16 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MERN eCommerce (next.js/typescript)
+
+This is a next.js / typescript / redux-toolkit variant of the great [MERN eCommerce from Scratch](https://www.udemy.com/course/mern-ecommerce) course by [Brad Traversy](https://github.com/bradtraversy).
+
+see also 
+
+* https://www.udemy.com/course/mern-ecommerce
+* https://github.com/bradtraversy/proshop_mern
+
+In addition to the code from the sample repo it also contains a few security fixes.
+
+Note that I purposefully stuck to the redux variant of the client app model even though it is somewhat of an 
+antipattern when using next.js (you could use `getServerSideProps`).
 
 ## Getting Started
 
